@@ -79,8 +79,17 @@ export interface Lesson {
   companyId: string;
   title: string;
   moduleTitle: string;
+  trackIds?: string[];
   fileName: string;
   fileContent: string;
+  createdAt: string;
+}
+
+export interface CompanyMessage {
+  id: string;
+  companyId: string;
+  title: string;
+  content: string;
   createdAt: string;
 }
 
@@ -1222,6 +1231,7 @@ export const db = {
           companyId: r.company_id,
           title: r.title,
           moduleTitle: r.module_title,
+          trackIds: r.track_ids ? JSON.parse(r.track_ids) : [],
           fileName: r.file_name,
           fileContent: r.file_content,
           createdAt: r.created_at
@@ -1249,13 +1259,15 @@ export const db = {
     title: string,
     moduleTitle: string,
     fileName: string,
-    fileContent: string
+    fileContent: string,
+    trackIds: string[] = []
   ): Promise<Lesson> {
     const newLesson: Lesson = {
       id: 'les-' + Math.random().toString(36).substr(2, 9),
       companyId,
       title,
       moduleTitle,
+      trackIds,
       fileName,
       fileContent,
       createdAt: new Date().toISOString()
@@ -1264,8 +1276,8 @@ export const db = {
     if (isServer && isLiveNeon && sql) {
       try {
         const [row] = await sql`
-          INSERT INTO lessons (id, company_id, title, module_title, file_name, file_content, created_at)
-          VALUES (${newLesson.id}, ${companyId}, ${title}, ${moduleTitle}, ${fileName}, ${fileContent}, NOW())
+          INSERT INTO lessons (id, company_id, title, module_title, track_ids, file_name, file_content, created_at)
+          VALUES (${newLesson.id}, ${companyId}, ${title}, ${moduleTitle}, ${JSON.stringify(trackIds)}, ${fileName}, ${fileContent}, NOW())
           RETURNING *
         `;
         return {
@@ -1273,6 +1285,7 @@ export const db = {
           companyId: row.company_id,
           title: row.title,
           moduleTitle: row.module_title,
+          trackIds: row.track_ids ? JSON.parse(row.track_ids) : [],
           fileName: row.file_name,
           fileContent: row.file_content,
           createdAt: row.created_at
@@ -1317,6 +1330,104 @@ export const db = {
       let list = JSON.parse(localStorage.getItem('takwin_lessons') || '[]');
       list = list.filter((l: Lesson) => l.id !== id);
       localStorage.setItem('takwin_lessons', JSON.stringify(list));
+    }
+  },
+
+  // --- COMPANY MESSAGES ---
+  async getCompanyMessages(companyId: string): Promise<CompanyMessage[]> {
+    if (isServer && isLiveNeon && sql) {
+      try {
+        const rows = await sql`
+          SELECT * FROM company_messages 
+          WHERE company_id = ${companyId} 
+          ORDER BY created_at DESC
+        `;
+        return rows.map(r => ({
+          id: r.id,
+          companyId: r.company_id,
+          title: r.title,
+          content: r.content,
+          createdAt: r.created_at
+        }));
+      } catch (err) {
+        console.error('Server getCompanyMessages failed:', err);
+      }
+    } else if (!isServer) {
+      const bridge = await callApiBridge('getCompanyMessages', { companyId });
+      if (!bridge.fallback) {
+        return bridge.data as CompanyMessage[];
+      }
+    }
+
+    // Offline fallback
+    if (typeof window !== 'undefined') {
+      const list = JSON.parse(localStorage.getItem('takwin_company_messages') || '[]');
+      return list.filter((m: CompanyMessage) => m.companyId === companyId);
+    }
+    return [];
+  },
+
+  async addCompanyMessage(companyId: string, title: string, content: string): Promise<CompanyMessage> {
+    const newMessage: CompanyMessage = {
+      id: 'msg-' + Math.random().toString(36).substr(2, 9),
+      companyId,
+      title,
+      content,
+      createdAt: new Date().toISOString()
+    };
+
+    if (isServer && isLiveNeon && sql) {
+      try {
+        const [row] = await sql`
+          INSERT INTO company_messages (id, company_id, title, content, created_at)
+          VALUES (${newMessage.id}, ${companyId}, ${title}, ${content}, NOW())
+          RETURNING *
+        `;
+        return {
+          id: row.id,
+          companyId: row.company_id,
+          title: row.title,
+          content: row.content,
+          createdAt: row.created_at
+        };
+      } catch (err) {
+        console.error('Server addCompanyMessage failed:', err);
+      }
+    } else if (!isServer) {
+      const bridge = await callApiBridge('addCompanyMessage', newMessage);
+      if (!bridge.fallback) {
+        return bridge.data as CompanyMessage;
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      const list = JSON.parse(localStorage.getItem('takwin_company_messages') || '[]');
+      list.push(newMessage);
+      localStorage.setItem('takwin_company_messages', JSON.stringify(list));
+      return newMessage;
+    }
+    return newMessage;
+  },
+
+  async deleteCompanyMessage(id: string): Promise<void> {
+    if (isServer && isLiveNeon && sql) {
+      try {
+        await sql`DELETE FROM company_messages WHERE id = ${id}`;
+        return;
+      } catch (err) {
+        console.error('Server deleteCompanyMessage failed:', err);
+      }
+    } else if (!isServer) {
+      const bridge = await callApiBridge('deleteCompanyMessage', { id });
+      if (!bridge.fallback) {
+        return;
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      let list = JSON.parse(localStorage.getItem('takwin_company_messages') || '[]');
+      list = list.filter((m: CompanyMessage) => m.id !== id);
+      localStorage.setItem('takwin_company_messages', JSON.stringify(list));
     }
   },
 

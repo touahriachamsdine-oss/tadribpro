@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/lib/LanguageContext';
-import { db, Company, Trainee, OFFICIAL_TRACKS } from '@/lib/db';
+import { db, Company, Trainee, OFFICIAL_TRACKS, TrainingTrack, Lesson } from '@/lib/db';
 import { 
   Home, 
   Building2, 
@@ -22,7 +22,10 @@ import {
   TrendingUp,
   PieChart,
   Edit3,
-  ExternalLink
+  ExternalLink,
+  BookOpen,
+  Upload,
+  FileText
 } from 'lucide-react';
 
 export default function SuperAdminPage() {
@@ -31,11 +34,31 @@ export default function SuperAdminPage() {
   // Dashboard states
   const [companies, setCompanies] = useState<Company[]>([]);
   const [trainees, setTrainees] = useState<Trainee[]>([]);
-  const [activeMenu, setActiveMenu] = useState<'dashboard' | 'companies' | 'tracks' | 'users' | 'settings'>('dashboard');
+  const [activeMenu, setActiveMenu] = useState<'dashboard' | 'companies' | 'tracks' | 'lessons' | 'users' | 'settings'>('dashboard');
   
   // Stats
   const [totalTrainees, setTotalTrainees] = useState(0);
   const [ongoingCourses, setOngoingCourses] = useState(0);
+
+  // Global tracks & lessons states
+  const [globalTracks, setGlobalTracks] = useState<TrainingTrack[]>([]);
+  const [globalLessons, setGlobalLessons] = useState<Lesson[]>([]);
+
+  // Forms states - Global Track creation
+  const [newTrackTitleAr, setNewTrackTitleAr] = useState('');
+  const [newTrackTitleFr, setNewTrackTitleFr] = useState('');
+  const [newTrackSectorAr, setNewTrackSectorAr] = useState('');
+  const [newTrackSectorFr, setNewTrackSectorFr] = useState('');
+  const [newTrackCategory, setNewTrackCategory] = useState<'joint' | 'research' | 'regional'>('joint');
+  const [newTrackModulesArStr, setNewTrackModulesArStr] = useState('');
+  const [newTrackModulesFrStr, setNewTrackModulesFrStr] = useState('');
+
+  // Forms states - Global Lesson Upload
+  const [newLessonTitle, setNewLessonTitle] = useState('');
+  const [newLessonTrackIds, setNewLessonTrackIds] = useState<string[]>([]);
+  const [newLessonModule, setNewLessonModule] = useState('');
+  const [newLessonFileName, setNewLessonFileName] = useState('');
+  const [newLessonFileContent, setNewLessonFileContent] = useState('');
 
   // New Company form states
   const [compName, setCompName] = useState('');
@@ -63,6 +86,19 @@ export default function SuperAdminPage() {
       
       const activeCount = traineesList.filter(t => t.status === 'active').length;
       setOngoingCourses(activeCount);
+
+      const tracks = await db.getCompanyTracks('global');
+      setGlobalTracks(tracks);
+      if (tracks.length > 0) {
+        setNewLessonTrackIds([tracks[0].id]);
+        const modules = language === 'ar' ? tracks[0].modules_ar : tracks[0].modules_fr;
+        if (modules && modules.length > 0) {
+          setNewLessonModule(modules[0]);
+        }
+      }
+
+      const lessonsList = await db.getLessons('global');
+      setGlobalLessons(lessonsList);
     } catch (err) {
       console.error(err);
     }
@@ -71,6 +107,156 @@ export default function SuperAdminPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  // Update track selector module list dynamically
+  useEffect(() => {
+    if (newLessonTrackIds.length > 0 && globalTracks.length > 0) {
+      const selected = globalTracks.find(t => t.id === newLessonTrackIds[0]);
+      if (selected) {
+        const modules = language === 'ar' ? selected.modules_ar : selected.modules_fr;
+        if (modules && modules.length > 0) {
+          setNewLessonModule(modules[0]);
+        }
+      }
+    }
+  }, [newLessonTrackIds, globalTracks, language]);
+
+  const handleAddGlobalTrack = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!newTrackTitleAr || !newTrackTitleFr || !newTrackSectorAr || !newTrackSectorFr) {
+      setError(language === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة.' : 'Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+
+    const modulesAr = newTrackModulesArStr.split('\n').map(m => m.trim()).filter(m => m.length > 0);
+    const modulesFr = newTrackModulesFrStr.split('\n').map(m => m.trim()).filter(m => m.length > 0);
+
+    if (modulesAr.length === 0 || modulesFr.length === 0) {
+      setError(language === 'ar' ? 'يرجى إدخال مقياس واحد على الأقل.' : 'Veuillez saisir au moins un module.');
+      return;
+    }
+
+    const newTrack: TrainingTrack = {
+      id: 'tr-' + Math.random().toString(36).substr(2, 9),
+      title_ar: newTrackTitleAr,
+      title_fr: newTrackTitleFr,
+      sector_ar: newTrackSectorAr,
+      sector_fr: newTrackSectorFr,
+      category: newTrackCategory,
+      modules_ar: modulesAr,
+      modules_fr: modulesFr
+    };
+
+    const updatedTracks = [...globalTracks, newTrack];
+    setGlobalTracks(updatedTracks);
+
+    try {
+      await db.saveCompanyTracks('global', updatedTracks);
+      setSuccess(language === 'ar' ? 'تمت إضافة الرتبة العامة الجديدة بنجاح!' : 'Nouveau grade global ajouté avec succès !');
+      
+      // Reset form
+      setNewTrackTitleAr('');
+      setNewTrackTitleFr('');
+      setNewTrackSectorAr('');
+      setNewTrackSectorFr('');
+      setNewTrackModulesArStr('');
+      setNewTrackModulesFrStr('');
+      
+      loadData();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch {
+      setError(language === 'ar' ? 'فشل حفظ الرتبة في قاعدة البيانات.' : 'Échec de sauvegarde.');
+    }
+  };
+
+  const handleDeleteGlobalTrack = async (trackId: string, title: string) => {
+    const consent = window.confirm(
+      language === 'ar'
+        ? `هل أنت متأكد من حذف الرتبة العامة "${title}"؟`
+        : `Êtes-vous sûr de vouloir supprimer le grade global "${title}" ?`
+    );
+    if (!consent) return;
+
+    const updatedTracks = globalTracks.filter(t => t.id !== trackId);
+    setGlobalTracks(updatedTracks);
+
+    try {
+      await db.saveCompanyTracks('global', updatedTracks);
+      setSuccess(language === 'ar' ? 'تم حذف الرتبة العامة بنجاح!' : 'Grade global supprimé avec succès !');
+      loadData();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch {
+      setError(language === 'ar' ? 'فشل تحديث قاعدة البيانات.' : 'Échec de suppression.');
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewLessonFileName(file.name);
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setNewLessonFileContent(event.target?.result as string || `Contenu de ${file.name}`);
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handleUploadGlobalLesson = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!newLessonTitle || newLessonTrackIds.length === 0 || !newLessonFileName) {
+      setError(language === 'ar' ? 'يرجى تعبئة جميع معلومات الدرس والملف.' : 'Veuillez remplir toutes les informations du cours.');
+      return;
+    }
+
+    try {
+      await db.addLesson(
+        'global',
+        newLessonTitle,
+        newLessonModule || 'General',
+        newLessonFileName,
+        newLessonFileContent || 'Contenu PDF Simulé - Document Central.',
+        newLessonTrackIds
+      );
+
+      setSuccess(language === 'ar' ? 'تم رفع درس PDF العام بنجاح!' : 'Le cours PDF global a été téléversé avec succès !');
+      
+      // Reset form
+      setNewLessonTitle('');
+      setNewLessonFileName('');
+      setNewLessonFileContent('');
+      
+      loadData();
+      setTimeout(() => setSuccess(''), 3500);
+    } catch {
+      setError(language === 'ar' ? 'خطأ أثناء رفع الدرس.' : 'Erreur lors du téléversement.');
+    }
+  };
+
+  const handleDeleteGlobalLesson = async (lessonId: string, title: string) => {
+    const consent = window.confirm(
+      language === 'ar'
+        ? `هل أنت متأكد من حذف الدرس العام "${title}"؟`
+        : `Êtes-vous sûr de vouloir supprimer le cours général "${title}" ?`
+    );
+    if (!consent) return;
+
+    try {
+      await db.deleteLesson(lessonId);
+      setSuccess(language === 'ar' ? 'تم حذف الدرس العام بنجاح!' : 'Cours global supprimé avec succès !');
+      loadData();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch {
+      setError(language === 'ar' ? 'فشل التحديث.' : 'Échec de suppression.');
+    }
+  };
 
   const handleAddCompany = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -201,7 +387,8 @@ export default function SuperAdminPage() {
   const menuItems = [
     { id: 'dashboard', label: t('menuDashboard'), icon: Home },
     { id: 'companies', label: t('menuCompanies'), icon: Building2 },
-    { id: 'tracks', label: t('menuTracks'), icon: GraduationCap },
+    { id: 'tracks', label: language === 'ar' ? 'الرتب والمسارات العامة' : 'Ranks & Roles Globaux', icon: Layers },
+    { id: 'lessons', label: language === 'ar' ? 'المكتبة والدروس العامة' : 'Cours & Leçons Globales', icon: BookOpen },
     { id: 'users', label: language === 'ar' ? 'قائمة الموظفين' : 'Liste des agents', icon: Users2 },
     { id: 'settings', label: t('menuSettings'), icon: Settings2 },
   ];
@@ -256,7 +443,7 @@ export default function SuperAdminPage() {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveMenu(item.id as 'dashboard' | 'companies' | 'tracks' | 'users' | 'settings')}
+                onClick={() => setActiveMenu(item.id as 'dashboard' | 'companies' | 'tracks' | 'lessons' | 'users' | 'settings')}
                 className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
                   isActive 
                     ? 'text-white bg-[#5C7449]/30' 
@@ -765,42 +952,362 @@ export default function SuperAdminPage() {
         )}
 
         {activeMenu === 'tracks' && (
-          <div className="flex flex-col gap-6">
-            <div className="border-b border-[#F3E4C9] pb-3 mb-2 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-[#3E5C46] flex items-center gap-2">
-                <Layers className="w-5 h-5 text-[#3E5C46]" />
-                {language === 'ar' ? 'كتالوج الشعب والمسارات الوطنية المعتمدة' : 'Catalogue National des Parcours Agréés'}
-              </h3>
-              <span className="text-xs font-bold text-[#CCD67F] bg-[#3E5C46] px-3 py-1 rounded-full">
-                {OFFICIAL_TRACKS.length} {language === 'ar' ? 'مسارات رسمية' : 'parcours'}
-              </span>
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start animate-fadeIn animate-duration-200">
+            {/* Global Tracks list */}
+            <div className="xl:col-span-8 flex flex-col gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-[#5C7449]/10 w-full">
+              <div className="border-b border-[#F3E4C9] pb-3 flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-bold text-[#3E5C46]">
+                    {language === 'ar' ? 'الرتب والمسارات المهنية العامة' : 'Grades & Parcours Globaux'}
+                  </h3>
+                  <p className="text-[11px] text-[#5C7449] mt-0.5 font-medium leading-relaxed">
+                    {language === 'ar' ? 'المسارات والرتب المتاحة لجميع المؤسسات والشركات المنخرطة لتسجيل موظفيها.' : 'Liste des spécialités et grades officiels utilisables par toutes les institutions.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Combined Tracks Display */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                {/* Official Tracks */}
+                {OFFICIAL_TRACKS.map((track) => (
+                  <div key={track.id} className="p-5 rounded-2xl bg-[#F3E4C9]/25 border border-[#5C7449]/10 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[9px] px-2 py-0.5 bg-[#3E5C46] text-[#F3E4C9] font-black uppercase rounded-md">
+                          {language === 'ar' ? 'رسمي' : 'Officiel'}
+                        </span>
+                        <span className="text-[9px] text-[#5C7449] font-black uppercase">{track.category}</span>
+                      </div>
+                      <h4 className="text-base font-extrabold text-[#3E5C46]">
+                        {language === 'ar' ? track.title_ar : track.title_fr}
+                      </h4>
+                      <p className="text-[10px] text-[#5C7449] mt-1 font-semibold">
+                        {language === 'ar' ? track.sector_ar : track.sector_fr}
+                      </p>
+                      <div className="mt-3 flex flex-col gap-1 border-t border-[#F3E4C9]/60 pt-2">
+                        {(language === 'ar' ? track.modules_ar : track.modules_fr).map((mod, idx) => (
+                          <div key={idx} className="text-[10px] text-[#3E5C46]/80 font-bold flex items-center gap-1">
+                            <span className="text-[#CCD67F]">•</span>
+                            <span>{mod}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Custom Global Tracks */}
+                {globalTracks.map((track) => (
+                  <div key={track.id} className="p-5 rounded-2xl bg-[#CCD67F]/10 border border-[#CCD67F]/40 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[9px] px-2 py-0.5 bg-[#CCD67F] text-[#3E5C46] font-black uppercase rounded-md">
+                          {language === 'ar' ? 'مخصص عام' : 'Global Custom'}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteGlobalTrack(track.id, language === 'ar' ? track.title_ar : track.title_fr)}
+                          className="text-red-700 hover:text-red-900 transition-colors"
+                          title={language === 'ar' ? 'حذف الرتبة' : 'Supprimer'}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <h4 className="text-base font-extrabold text-[#3E5C46]">
+                        {language === 'ar' ? track.title_ar : track.title_fr}
+                      </h4>
+                      <p className="text-[10px] text-[#5C7449] mt-1 font-semibold">
+                        {language === 'ar' ? track.sector_ar : track.sector_fr}
+                      </p>
+                      <div className="mt-3 flex flex-col gap-1 border-t border-[#CCD67F]/30 pt-2">
+                        {(language === 'ar' ? track.modules_ar : track.modules_fr).map((mod, idx) => (
+                          <div key={idx} className="text-[10px] text-[#3E5C46]/80 font-bold flex items-center gap-1">
+                            <span className="text-[#CCD67F]">•</span>
+                            <span>{mod}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {OFFICIAL_TRACKS.map((track, i) => (
-                <div key={i} className="bg-[#F3E4C9]/40 p-6 rounded-2xl border border-[#5C7449]/20 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[10px] font-black uppercase text-[#3E5C46] tracking-widest block mb-1">
-                      {language === 'ar' ? track.sector_ar : track.sector_fr}
-                    </span>
-                    <h4 className="text-lg font-black text-[#3E5C46] leading-tight mb-4">
-                      {language === 'ar' ? track.title_ar : track.title_fr}
-                    </h4>
+            {/* Create Track Form */}
+            <div className="xl:col-span-4 bg-[#F3E4C9] p-6 sm:p-8 rounded-2xl w-full">
+              <h3 className="text-lg font-bold text-[#3E5C46] mb-2 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-[#3E5C46]" />
+                {language === 'ar' ? 'إنشاء رتبة/مسار عام' : 'Créer Grade Global'}
+              </h3>
+              <p className="text-xs text-[#5C7449] mb-6 leading-normal">
+                {language === 'ar' ? 'قم بإضافة مسار تدريبي جديد ليصبح متاحاً لجميع المشرفين بالمؤسسات لتعيين موظفيهم عليه.' : 'Créez un nouveau parcours partagé pour toutes les entreprises.'}
+              </p>
 
-                    <div className="flex flex-col gap-2 mt-2">
-                      <span className="text-xs font-bold text-[#5C7449] block mb-1">
-                        📚 {language === 'ar' ? 'المقاييس المبرمجة بالمسار:' : 'Modules d’études programmés :'}
-                      </span>
-                      {(language === 'ar' ? track.modules_ar : track.modules_fr).map((mod, j) => (
-                        <div key={j} className="text-xs flex items-center gap-2 font-semibold text-[#3E5C46]">
-                          <ChevronRight className="w-3.5 h-3.5 text-[#CCD67F]" />
-                          <span>{mod}</span>
+              {success && activeMenu === 'tracks' && (
+                <div className="bg-[#CCD67F]/40 text-[#3E5C46] p-3.5 rounded-xl mb-4 text-xs font-semibold flex items-center gap-2 animate-fadeIn">
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                  <span>{success}</span>
+                </div>
+              )}
+              {error && activeMenu === 'tracks' && (
+                <div className="bg-red-100 text-red-800 p-3.5 rounded-xl mb-4 text-xs font-semibold animate-fadeIn">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleAddGlobalTrack} className="flex flex-col gap-4 text-xs font-semibold text-[#3E5C46]">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'اسم الرتبة بالعربية' : 'Titre du Grade (Arabe)'}</label>
+                  <input
+                    type="text"
+                    value={newTrackTitleAr}
+                    onChange={(e) => setNewTrackTitleAr(e.target.value)}
+                    placeholder="مثال: عون إدارة رئيسي"
+                    className="underline-input text-[#3E5C46] font-bold"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'اسم الرتبة بالفرنسية' : 'Titre du Grade (Français)'}</label>
+                  <input
+                    type="text"
+                    value={newTrackTitleFr}
+                    onChange={(e) => setNewTrackTitleFr(e.target.value)}
+                    placeholder="Ex: Agent d'Administration Principal"
+                    className="underline-input text-[#3E5C46] font-bold"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'القطاع بالعربية' : 'Secteur (Arabe)'}</label>
+                  <input
+                    type="text"
+                    value={newTrackSectorAr}
+                    onChange={(e) => setNewTrackSectorAr(e.target.value)}
+                    placeholder="مثال: الأسلاك المشتركة"
+                    className="underline-input text-[#3E5C46]"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'القطاع بالفرنسية' : 'Secteur (Français)'}</label>
+                  <input
+                    type="text"
+                    value={newTrackSectorFr}
+                    onChange={(e) => setNewTrackSectorFr(e.target.value)}
+                    placeholder="Ex: Corps Communs"
+                    className="underline-input text-[#3E5C46]"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'تصنيف الفئة' : 'Catégorie de Grade'}</label>
+                  <select
+                    value={newTrackCategory}
+                    onChange={(e) => setNewTrackCategory(e.target.value as any)}
+                    className="underline-input bg-transparent"
+                  >
+                    <option value="joint" className="bg-[#fbf8f3] text-[#3E5C46]">{language === 'ar' ? 'أسلاك مشتركة' : 'Corps Communs'}</option>
+                    <option value="research" className="bg-[#fbf8f3] text-[#3E5C46]">{language === 'ar' ? 'دعم البحث العلمي' : 'Soutien Recherche'}</option>
+                    <option value="regional" className="bg-[#fbf8f3] text-[#3E5C46]">{language === 'ar' ? 'إدارات إقليمية بلديات' : 'Régionale'}</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">📚 {language === 'ar' ? 'المقاييس المبرمجة بالعربية (واحد في كل سطر)' : 'Modules en Arabe (un par ligne)'}</label>
+                  <textarea
+                    rows={3}
+                    value={newTrackModulesArStr}
+                    onChange={(e) => setNewTrackModulesArStr(e.target.value)}
+                    placeholder={`مثال:\nقانون الوظيفة العامة\nتحرير إداري أساسي`}
+                    className="underline-input bg-transparent whitespace-pre text-[#3E5C46]"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">📚 {language === 'ar' ? 'المقاييس بالفرنسية (واحد في كل سطر)' : 'Modules en Français (un par ligne)'}</label>
+                  <textarea
+                    rows={3}
+                    value={newTrackModulesFrStr}
+                    onChange={(e) => setNewTrackModulesFrStr(e.target.value)}
+                    placeholder={`Ex:\nStatut de la fonction publique\nRédaction administrative`}
+                    className="underline-input bg-transparent whitespace-pre text-[#3E5C46]"
+                    required
+                  />
+                </div>
+
+                <button type="submit" className="btn-pill-sage w-full py-3 mt-4 text-xs font-bold">
+                  {language === 'ar' ? 'حفظ وإدراج المسار العام' : 'Enregistrer le Grade'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {activeMenu === 'lessons' && (
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start animate-fadeIn animate-duration-200">
+            {/* Global Lessons list */}
+            <div className="xl:col-span-8 flex flex-col gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-[#5C7449]/10 w-full">
+              <div className="border-b border-[#F3E4C9] pb-3">
+                <h3 className="text-xl font-bold text-[#3E5C46]">
+                  {language === 'ar' ? 'المكتبة المركزية للدروس العامة' : 'Bibliothèque Centrale des Leçons'}
+                </h3>
+                <p className="text-[11px] text-[#5C7449] mt-0.5 font-medium leading-relaxed">
+                  {language === 'ar' ? 'الدروس والملفات العامة المتاحة لجميع المتكونين المنسوبين لهذه الرتب.' : 'Documents de cours globaux partagés avec les stagiaires de tous les établissements.'}
+                </p>
+              </div>
+
+              {globalLessons.length === 0 ? (
+                <div className="p-12 text-center bg-[#F3E4C9]/20 rounded-2xl border border-dashed border-[#5C7449]/30 text-[#5C7449] font-bold text-xs">
+                  {language === 'ar' ? 'لا توجد دروس عامة مرفوعة بعد. استخدم النموذج الجانبي لرفع أول مستند!' : 'Aucun cours global téléversé pour le moment.'}
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {globalLessons.map((lesson) => (
+                    <div 
+                      key={lesson.id}
+                      className="p-5 rounded-2xl bg-[#CCD67F]/10 border border-[#CCD67F]/40 flex items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="bg-[#3E5C46] text-[#F3E4C9] p-3 rounded-xl">
+                          <FileText className="w-6 h-6" />
                         </div>
+                        <div>
+                          <span className="text-[9px] px-2 py-0.5 bg-[#3E5C46] text-[#F3E4C9] font-black uppercase rounded-md tracking-wider">
+                            {lesson.moduleTitle}
+                          </span>
+                          <h4 className="text-base font-extrabold text-[#3E5C46] mt-1 leading-tight">
+                            {lesson.title}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1.5 text-[10px] text-[#5C7449] font-semibold">
+                            <span className="underline font-mono">{lesson.fileName}</span>
+                            <span>•</span>
+                            <span>{new Date(lesson.createdAt).toLocaleString(language === 'ar' ? 'ar-DZ' : 'fr-FR')}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleDeleteGlobalLesson(lesson.id, lesson.title)}
+                        className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors"
+                        title={language === 'ar' ? 'حذف الدرس' : 'Supprimer'}
+                      >
+                        <Trash2 className="w-4.5 h-4.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Global Lesson Uploader Form */}
+            <div className="xl:col-span-4 bg-[#F3E4C9] p-6 sm:p-8 rounded-2xl w-full">
+              <h3 className="text-lg font-bold text-[#3E5C46] mb-2 flex items-center gap-2">
+                <Upload className="w-5 h-5 text-[#3E5C46]" />
+                {language === 'ar' ? 'رفع وثيقة أو درس عام' : 'Téléverser Leçon Globale'}
+              </h3>
+              <p className="text-xs text-[#5C7449] mb-6 leading-normal">
+                {language === 'ar' ? 'ارفع درس PDF جديد واربطه بمسار أو رتبة محددة ليظهر في حسابات موظفيها تلقائياً.' : 'Associez un support de cours centralisé aux parcours d’études correspondants.'}
+              </p>
+
+              {success && activeMenu === 'lessons' && (
+                <div className="bg-[#CCD67F]/40 text-[#3E5C46] p-3.5 rounded-xl mb-4 text-xs font-semibold flex items-center gap-2 animate-fadeIn">
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                  <span>{success}</span>
+                </div>
+              )}
+              {error && activeMenu === 'lessons' && (
+                <div className="bg-red-100 text-red-800 p-3.5 rounded-xl mb-4 text-xs font-semibold animate-fadeIn">
+                  {error}
+                </div>
+              )}
+
+              {globalTracks.length === 0 ? (
+                <div className="p-4 bg-amber-100 border border-amber-200 text-amber-900 rounded-xl text-xs font-semibold leading-relaxed">
+                  {language === 'ar' ? 'يرجى إعداد رتب ومسارات للمنصة أولاً قبل رفع الدروس!' : 'Créez un grade d’abord pour pouvoir y lier des documents.'}
+                </div>
+              ) : (
+                <form onSubmit={handleUploadGlobalLesson} className="flex flex-col gap-4 text-xs font-semibold text-[#3E5C46]">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'عنوان الدرس / الوثيقة' : 'Titre de la Leçon'}</label>
+                    <input
+                      type="text"
+                      value={newLessonTitle}
+                      onChange={(e) => setNewLessonTitle(e.target.value)}
+                      placeholder={language === 'ar' ? 'مثال: منهجية كتابة التقارير الرسمية' : 'Ex: Méthode d\'archivage'}
+                      className="underline-input text-[#3E5C46]"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] uppercase font-bold tracking-wider mb-1">{language === 'ar' ? 'الرتب والمسارات المستهدفة' : 'Grades Associés'}</label>
+                    <div className="flex flex-col gap-2 max-h-32 overflow-y-auto border border-[#5C7449]/30 rounded-lg p-2 bg-[#fbf8f3]/50">
+                      {globalTracks.map((track) => (
+                        <label key={track.id} className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#3E5C46]">
+                          <input 
+                            type="checkbox"
+                            checked={newLessonTrackIds.includes(track.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewLessonTrackIds(prev => [...prev, track.id]);
+                              } else {
+                                setNewLessonTrackIds(prev => prev.filter(id => id !== track.id));
+                              }
+                            }}
+                            className="accent-[#3E5C46]"
+                          />
+                          {language === 'ar' ? track.title_ar : track.title_fr}
+                        </label>
                       ))}
                     </div>
                   </div>
-                </div>
-              ))}
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'المقياس / المادة الدراسية' : 'Module de Spécialité'}</label>
+                    <select
+                      value={newLessonModule}
+                      onChange={(e) => setNewLessonModule(e.target.value)}
+                      className="underline-input bg-transparent text-[#3E5C46]"
+                    >
+                      {newLessonTrackIds.length > 0 && (() => {
+                        const selected = globalTracks.find(t => t.id === newLessonTrackIds[0]);
+                        if (!selected) return <option value="">General</option>;
+                        const modules = language === 'ar' ? selected.modules_ar : selected.modules_fr;
+                        return modules.map((m, idx) => (
+                          <option key={idx} value={m} className="bg-[#fbf8f3] text-[#3E5C46]">{m}</option>
+                        ));
+                      })()}
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-2 mt-2">
+                    <label className="text-[10px] uppercase font-bold tracking-wider">
+                      📄 {language === 'ar' ? 'ملف الدرس (PDF أو نصي)' : 'Document PDF / TXT'}
+                    </label>
+                    <div className="relative border-2 border-dashed border-[#5C7449]/30 hover:border-[#3E5C46] rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#CCD67F]/10">
+                      <input 
+                        type="file" 
+                        accept=".pdf,.txt,.docx,.png"
+                        onChange={file => handleFileChange(file)}
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                      />
+                      <Upload className="w-8 h-8 text-[#3E5C46] mx-auto mb-2" />
+                      <span className="text-xs font-bold text-[#3E5C46] block mb-1">
+                        {newLessonFileName || (language === 'ar' ? 'اضغط هنا لرفع الملف' : 'Cliquez ici pour charger')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="btn-pill-sage w-full py-3 mt-4 text-xs font-bold">
+                    {language === 'ar' ? 'تأكيد رفع الدرس العام' : 'Téléverser le Document'}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         )}

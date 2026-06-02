@@ -364,6 +364,7 @@ export async function POST(request: Request) {
           companyId: r.company_id,
           title: r.title,
           moduleTitle: r.module_title,
+          trackIds: r.track_ids ? JSON.parse(r.track_ids) : [],
           fileName: r.file_name,
           fileContent: r.file_content,
           createdAt: r.created_at
@@ -372,10 +373,10 @@ export async function POST(request: Request) {
       }
 
       case 'addLesson': {
-        const { id, companyId, title, moduleTitle, fileName, fileContent } = payload;
+        const { id, companyId, title, moduleTitle, trackIds, fileName, fileContent } = payload;
         const [row] = await sql`
-          INSERT INTO lessons (id, company_id, title, module_title, file_name, file_content, created_at)
-          VALUES (${id}, ${companyId}, ${title}, ${moduleTitle}, ${fileName}, ${fileContent}, NOW())
+          INSERT INTO lessons (id, company_id, title, module_title, track_ids, file_name, file_content, created_at)
+          VALUES (${id}, ${companyId}, ${title}, ${moduleTitle}, ${JSON.stringify(trackIds || [])}, ${fileName}, ${fileContent}, NOW())
           RETURNING *
         `;
         return NextResponse.json({
@@ -385,6 +386,7 @@ export async function POST(request: Request) {
             companyId: row.company_id,
             title: row.title,
             moduleTitle: row.module_title,
+            trackIds: row.track_ids ? JSON.parse(row.track_ids) : [],
             fileName: row.file_name,
             fileContent: row.file_content,
             createdAt: row.created_at
@@ -395,6 +397,48 @@ export async function POST(request: Request) {
       case 'deleteLesson': {
         const { id } = payload;
         await sql`DELETE FROM lessons WHERE id = ${id}`;
+        return NextResponse.json({ success: true });
+      }
+
+      case 'getCompanyMessages': {
+        const { companyId } = payload;
+        const rows = await sql`
+          SELECT * FROM company_messages 
+          WHERE company_id = ${companyId} 
+          ORDER BY created_at DESC
+        `;
+        const normalized = rows.map(r => ({
+          id: r.id,
+          companyId: r.company_id,
+          title: r.title,
+          content: r.content,
+          createdAt: r.created_at
+        }));
+        return NextResponse.json({ success: true, data: normalized });
+      }
+
+      case 'addCompanyMessage': {
+        const { id, companyId, title, content } = payload;
+        const [row] = await sql`
+          INSERT INTO company_messages (id, company_id, title, content, created_at)
+          VALUES (${id}, ${companyId}, ${title}, ${content}, NOW())
+          RETURNING *
+        `;
+        return NextResponse.json({
+          success: true,
+          data: {
+            id: row.id,
+            companyId: row.company_id,
+            title: row.title,
+            content: row.content,
+            createdAt: row.created_at
+          }
+        });
+      }
+
+      case 'deleteCompanyMessage': {
+        const { id } = payload;
+        await sql`DELETE FROM company_messages WHERE id = ${id}`;
         return NextResponse.json({ success: true });
       }
 

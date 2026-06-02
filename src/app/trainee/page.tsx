@@ -60,6 +60,11 @@ export default function TraineePortalPage() {
   const [isSubmittingEval, setIsSubmittingEval] = useState<boolean>(false);
   const [evalSuccess, setEvalSuccess] = useState<boolean>(false);
 
+  // Messages & Lessons
+  const [companyMessages, setCompanyMessages] = useState<any[]>([]);
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [companyTracks, setCompanyTracks] = useState<any[]>([]);
+
   // Load trainees and tickets on mount
   useEffect(() => {
     async function loadData() {
@@ -86,19 +91,34 @@ export default function TraineePortalPage() {
       const match = trainees.find(t => t.id === selectedTraineeId);
       if (match) {
         setCurrentTrainee(match);
-        // Load tickets for this trainee
-        loadTraineeTickets(match.id);
+        // Load additional data for this trainee
+        loadTraineeData(match.id, match.companyId, match.trackId);
       }
     }
   }, [selectedTraineeId, trainees]);
 
-  const loadTraineeTickets = async (traineeId: string) => {
+  const loadTraineeData = async (traineeId: string, companyId: string, trackId: string) => {
     try {
       const allTickets = await db.getTickets();
       const filtered = allTickets.filter(t => t.traineeId === traineeId);
       setTraineeTickets(filtered);
+
+      const msgs = await db.getCompanyMessages(companyId);
+      setCompanyMessages(msgs);
+
+      // Load both company-specific lessons and global lessons
+      const companyLessons = await db.getLessons(companyId);
+      const globalLessons = await db.getLessons('global');
+      const allLessons = [...companyLessons, ...globalLessons];
+      const filteredLessons = allLessons.filter(l => l.trackIds && l.trackIds.includes(trackId));
+      setLessons(filteredLessons);
+
+      // Load both company-specific tracks and global tracks
+      const companyTracksList = await db.getCompanyTracks(companyId);
+      const globalTracksList = await db.getCompanyTracks('global');
+      setCompanyTracks([...companyTracksList, ...globalTracksList]);
     } catch (err) {
-      console.error('Error loading trainee tickets:', err);
+      console.error('Error loading trainee data:', err);
     }
   };
 
@@ -265,7 +285,9 @@ export default function TraineePortalPage() {
       setTicketSuccess(true);
       setTicketSubject('');
       setTicketMessage('');
-      loadTraineeTickets(currentTrainee.id);
+      const allTickets = await db.getTickets();
+      const filtered = allTickets.filter(t => t.traineeId === currentTrainee.id);
+      setTraineeTickets(filtered);
       
       // Auto dismiss success toast after 3s
       setTimeout(() => setTicketSuccess(false), 4000);
@@ -314,11 +336,11 @@ export default function TraineePortalPage() {
   };
 
   // Find modules for the current trainee's track
-  const getTrackModules = () => {
+  const getTrackModules = (): string[] => {
     if (!currentTrainee) return [];
-    const track = OFFICIAL_TRACKS.find(t => t.id === currentTrainee.trackId);
+    const track = companyTracks.find(t => t.id === currentTrainee.trackId) || OFFICIAL_TRACKS.find(t => t.id === currentTrainee.trackId);
     if (!track) return [];
-    return language === 'ar' ? track.modules_ar : track.modules_fr;
+    return (language === 'ar' ? track.modules_ar : track.modules_fr) as string[];
   };
 
   // Get Top Trainees for department Leaderboard (Honor Board)
@@ -798,8 +820,73 @@ export default function TraineePortalPage() {
             {/* DUAL COLUMN RESPONSIVE WORKSPACE (Checklist on left, Leaderboard on right) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               
-              {/* 2/3 COLUMN: MOODLE-STYLE CHECKLIST */}
-              <div className="lg:col-span-2">
+              {/* 2/3 COLUMN: MAIN CONTENT (Messages, Lessons, Checklist) */}
+              <div className="lg:col-span-2 flex flex-col gap-8">
+                
+                {/* COMPANY ANNOUNCEMENTS / MESSAGES */}
+                {companyMessages.length > 0 && (
+                  <section className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#5C7449]/10 shadow-sm animate-fadeIn">
+                    <div className="flex items-center gap-2 border-b border-[#F3E4C9] pb-3 mb-6">
+                      <MessageSquare className="w-5 h-5 text-[#3E5C46]" />
+                      <h3 className="text-xl font-bold text-[#3E5C46]">
+                        {language === 'ar' ? 'إعلانات المؤسسة' : 'Annonces de l\'établissement'}
+                      </h3>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      {companyMessages.map(msg => (
+                        <div key={msg.id} className="p-4 rounded-xl bg-[#F3E4C9]/40 border-l-4 sm:border-l-0 sm:border-r-4 border-[#3E5C46]">
+                          <h4 className="font-black text-sm text-[#3E5C46] mb-1">{msg.title}</h4>
+                          <p className="text-xs text-[#2d2621]/90 whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                          <div className="mt-2 text-[10px] text-[#5C7449] font-semibold">
+                            {new Date(msg.createdAt).toLocaleString(language === 'ar' ? 'ar-DZ' : 'fr-FR')}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* TARGETED LESSONS / PDF MATERIALS */}
+                {lessons.length > 0 && (
+                  <section className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#5C7449]/10 shadow-sm animate-fadeIn">
+                    <div className="flex items-center gap-2 border-b border-[#F3E4C9] pb-3 mb-6">
+                      <BookOpen className="w-5 h-5 text-[#3E5C46]" />
+                      <h3 className="text-xl font-bold text-[#3E5C46]">
+                        {language === 'ar' ? 'المواد التعليمية الإضافية' : 'Documents de formation'}
+                      </h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {lessons.map(lesson => (
+                        <div key={lesson.id} className="p-4 rounded-xl bg-white border border-[#5C7449]/20 shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-start gap-3 mb-2">
+                            <div className="bg-[#CCD67F]/20 p-2 rounded-lg text-[#3E5C46]">
+                              <BookOpen className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <h4 className="font-bold text-sm text-[#3E5C46] leading-tight">{lesson.title}</h4>
+                                {lesson.companyId === 'global' && (
+                                  <span className="text-[8px] font-black uppercase tracking-wider text-[#5C7449] bg-[#CCD67F]/30 px-1.5 py-0.5 rounded shrink-0">
+                                    {language === 'ar' ? 'عالمي' : 'Global'}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] font-semibold text-[#5C7449] mt-0.5">{lesson.moduleTitle}</p>
+                            </div>
+                          </div>
+                          <a 
+                            href="#" 
+                            onClick={(e) => { e.preventDefault(); alert(lesson.fileContent); }}
+                            className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-white bg-[#3E5C46] hover:bg-[#5C7449] transition-colors py-1.5 px-3 rounded-lg w-full justify-center"
+                          >
+                            <span>{language === 'ar' ? 'فتح الملف' : 'Ouvrir'}</span>
+                            <span className="font-mono text-[9px] truncate max-w-[100px]">{lesson.fileName}</span>
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
                 <section className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#5C7449]/10">
                   <div className="flex items-center gap-2 border-b border-[#F3E4C9] pb-3 mb-6">
                     <Layers className="w-5 h-5 text-[#3E5C46]" />

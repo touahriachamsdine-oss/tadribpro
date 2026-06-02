@@ -39,7 +39,7 @@ export default function CompanyAdminPage() {
   const router = useRouter();
   
   // Navigation tab state
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'ranks' | 'lessons' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'ranks' | 'lessons' | 'messages' | 'settings'>('dashboard');
 
   // Company session & identity
   const [companyId, setCompanyId] = useState<string>('comp-2');
@@ -53,7 +53,10 @@ export default function CompanyAdminPage() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [evaluations, setEvaluations] = useState<CourseEvaluation[]>([]);
   const [companyTracks, setCompanyTracks] = useState<TrainingTrack[]>([]);
+  const [globalTracks, setGlobalTracks] = useState<TrainingTrack[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [globalLessons, setGlobalLessons] = useState<Lesson[]>([]);
+  const [companyMessages, setCompanyMessages] = useState<any[]>([]);
   const [ticketFilter, setTicketFilter] = useState<'all' | 'pending' | 'resolved'>('all');
   
   // Form states - Enroll Trainee
@@ -73,10 +76,14 @@ export default function CompanyAdminPage() {
 
   // Form states - Custom Lesson Upload
   const [newLessonTitle, setNewLessonTitle] = useState('');
-  const [newLessonTrackId, setNewLessonTrackId] = useState('');
+  const [newLessonTrackIds, setNewLessonTrackIds] = useState<string[]>([]);
   const [newLessonModule, setNewLessonModule] = useState('');
   const [newLessonFileName, setNewLessonFileName] = useState('');
   const [newLessonFileContent, setNewLessonFileContent] = useState('');
+
+  // Form states - Company Messages
+  const [newMessageTitle, setNewMessageTitle] = useState('');
+  const [newMessageContent, setNewMessageContent] = useState('');
 
   // Form states - Company Settings
   const [editCompanyName, setEditCompanyName] = useState('');
@@ -123,23 +130,38 @@ export default function CompanyAdminPage() {
         setEditCompanySector(comp.sector);
       }
 
+      // Get global tracks from Super Admin repository
+      const gTracks = await db.getCompanyTracks('global');
+      setGlobalTracks(gTracks);
+
       // Get custom company tracks
       const tracks = await db.getCompanyTracks(activeCompanyId);
       setCompanyTracks(tracks);
-      if (tracks.length > 0) {
-        setTargetTrackId(tracks[0].id);
-        setNewLessonTrackId(tracks[0].id);
+
+      // Combined: global first, then company-specific
+      const combined = [...gTracks, ...tracks];
+      if (combined.length > 0) {
+        setTargetTrackId(combined[0].id);
+        setNewLessonTrackIds([combined[0].id]);
         
-        // Default module selection to the first track's first module
-        const modules = language === 'ar' ? tracks[0].modules_ar : tracks[0].modules_fr;
+        // Default module selection to the first combined track's first module
+        const modules = language === 'ar' ? combined[0].modules_ar : combined[0].modules_fr;
         if (modules && modules.length > 0) {
           setNewLessonModule(modules[0]);
         }
       }
 
+      // Get global lessons from Super Admin
+      const gLessonList = await db.getLessons('global');
+      setGlobalLessons(gLessonList);
+
       // Get company uploaded lessons
       const lessonList = await db.getLessons(activeCompanyId);
       setLessons(lessonList);
+
+      // Get company messages
+      const msgList = await db.getCompanyMessages(activeCompanyId);
+      setCompanyMessages(msgList);
 
       // Fetch trainees
       const traineeList = await db.getTrainees(activeCompanyId);
@@ -180,10 +202,11 @@ export default function CompanyAdminPage() {
     loadData(activeCompanyId);
   }, [loadData, router]);
 
-  // Update track selector module list dynamically
+  // Update track selector module list dynamically (using first selected track if any)
   useEffect(() => {
-    if (newLessonTrackId && companyTracks.length > 0) {
-      const selected = companyTracks.find(t => t.id === newLessonTrackId);
+    const allTracks = [...globalTracks, ...companyTracks];
+    if (newLessonTrackIds.length > 0 && allTracks.length > 0) {
+      const selected = allTracks.find(t => t.id === newLessonTrackIds[0]);
       if (selected) {
         const modules = language === 'ar' ? selected.modules_ar : selected.modules_fr;
         if (modules && modules.length > 0) {
@@ -191,7 +214,7 @@ export default function CompanyAdminPage() {
         }
       }
     }
-  }, [newLessonTrackId, companyTracks, language]);
+  }, [newLessonTrackIds, companyTracks, globalTracks, language]);
 
   const handleEnrollEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -437,7 +460,8 @@ export default function CompanyAdminPage() {
     e.preventDefault();
     if (!reassignTrainee || !reassignTargetTrackId) return;
 
-    const targetTrack = companyTracks.find(t => t.id === reassignTargetTrackId);
+    const allTracks = [...globalTracks, ...companyTracks];
+    const targetTrack = allTracks.find(t => t.id === reassignTargetTrackId);
     if (!targetTrack) return;
 
     try {
@@ -483,7 +507,7 @@ export default function CompanyAdminPage() {
     setError('');
     setSuccess('');
 
-    if (!newLessonTitle || !newLessonTrackId || !newLessonModule || !newLessonFileName) {
+    if (!newLessonTitle || newLessonTrackIds.length === 0 || !newLessonFileName) {
       setError(language === 'ar' ? 'يرجى تعبئة جميع معلومات الدرس والملف.' : 'Veuillez remplir toutes les informations du cours.');
       return;
     }
@@ -492,9 +516,10 @@ export default function CompanyAdminPage() {
       await db.addLesson(
         companyId,
         newLessonTitle,
-        newLessonModule,
+        newLessonModule || 'General',
         newLessonFileName,
-        newLessonFileContent || 'Contenu PDF Simulé - TakwinPro Multi-Tenant Document Content.'
+        newLessonFileContent || 'Contenu PDF Simulé - TakwinPro Multi-Tenant Document Content.',
+        newLessonTrackIds
       );
 
       setSuccess(language === 'ar' ? 'تم رفع درس PDF بنجاح وإلحاقه بالمقياس المعين للموظفين!' : 'Le cours PDF a été téléversé avec succès !');
@@ -529,6 +554,46 @@ export default function CompanyAdminPage() {
     }
   };
 
+  const handleAddCompanyMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!newMessageTitle || !newMessageContent) {
+      setError(language === 'ar' ? 'يرجى تعبئة جميع الحقول.' : 'Veuillez remplir tous les champs.');
+      return;
+    }
+
+    try {
+      await db.addCompanyMessage(companyId, newMessageTitle, newMessageContent);
+      setSuccess(language === 'ar' ? 'تم إرسال الإعلان بنجاح!' : 'Message envoyé avec succès !');
+      setNewMessageTitle('');
+      setNewMessageContent('');
+      loadData(companyId);
+      setTimeout(() => setSuccess(''), 3000);
+    } catch {
+      setError(language === 'ar' ? 'خطأ أثناء الإرسال.' : 'Erreur lors de l\'envoi.');
+    }
+  };
+
+  const handleDeleteCompanyMessage = async (msgId: string, title: string) => {
+    const consent = window.confirm(
+      language === 'ar'
+        ? `هل أنت متأكد من حذف الإعلان "${title}"؟`
+        : `Êtes-vous sûr de vouloir supprimer le message "${title}" ?`
+    );
+    if (!consent) return;
+
+    try {
+      await db.deleteCompanyMessage(msgId);
+      setSuccess(language === 'ar' ? 'تم الحذف بنجاح!' : 'Supprimé avec succès !');
+      loadData(companyId);
+      setTimeout(() => setSuccess(''), 3000);
+    } catch {
+      setError(language === 'ar' ? 'فشل الحذف.' : 'Échec de suppression.');
+    }
+  };
+
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -550,6 +615,7 @@ export default function CompanyAdminPage() {
   };
 
   const avgs = getAverageRatings();
+  const allTracks = [...globalTracks, ...companyTracks];
   const filteredTickets = tickets.filter(t => {
     if (ticketFilter === 'pending') return t.status === 'pending';
     if (ticketFilter === 'resolved') return t.status === 'resolved';
@@ -629,6 +695,19 @@ export default function CompanyAdminPage() {
             )}
             <FileText className="w-5 h-5 text-[#CCD67F]" />
             <span className="text-[10px] sm:text-xs lg:text-sm">{language === 'ar' ? 'الدروس والملفات' : 'Syllabus & Leçons'}</span>
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('messages')}
+            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+              activeTab === 'messages' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
+            }`}
+          >
+            {activeTab === 'messages' && (
+              <div className={`hidden lg:block absolute top-0 bottom-0 w-1 bg-[#CCD67F] ${dir === 'rtl' ? 'right-0' : 'left-0'}`} />
+            )}
+            <MessageSquare className="w-5 h-5 text-[#CCD67F]" />
+            <span className="hidden lg:block">{language === 'ar' ? 'الإعلانات والرسائل' : 'Annonces'}</span>
           </button>
 
           <button 
@@ -767,7 +846,12 @@ export default function CompanyAdminPage() {
                 <span className="text-[10px] uppercase font-black tracking-wider text-[#5C7449] block mb-1">
                   {language === 'ar' ? 'الرتب والمسارات المعتمدة' : 'Ranks & Parcours Actifs'}
                 </span>
-                <span className="text-3xl font-black text-[#3E5C46]">{companyTracks.length}</span>
+                <span className="text-3xl font-black text-[#3E5C46]">{allTracks.length}</span>
+                {allTracks.length > 0 && (
+                  <span className="text-[9px] text-[#5C7449] font-semibold block mt-1">
+                    {globalTracks.length} {language === 'ar' ? 'عالمية' : 'globaux'} + {companyTracks.length} {language === 'ar' ? 'خاصة' : 'propres'}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -780,47 +864,59 @@ export default function CompanyAdminPage() {
                 </h3>
               </div>
 
-              {companyTracks.length === 0 ? (
+              {allTracks.length === 0 ? (
                 <div className="p-12 text-center bg-[#F3E4C9]/20 rounded-2xl border border-dashed border-[#5C7449]/30 text-[#5C7449]">
                   {language === 'ar' ? 'لم يتم إعداد مسارات ورتب للمؤسسة بعد. يرجى إضافتها من تبويب الرتب والمسارات.' : 'Aucun parcours configuré. Allez sur l’onglet Ranks & Parcours pour ajouter des formations.'}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {companyTracks.map((track) => (
-                    <div 
-                      key={track.id} 
-                      className="bg-[#F3E4C9] p-6 rounded-2xl flex flex-col justify-between min-h-[170px] relative transition-all duration-300 hover:bg-[#EBDCBE] border-t-4 border-[#5C7449]"
-                    >
-                      <div>
-                        <div className="flex justify-between items-start mb-3">
-                          <span className="px-2.5 py-0.5 bg-[#CCD67F] text-[#3E5C46] text-[10px] font-bold rounded-full">
-                            {getCategoryLabel(track.category)}
-                          </span>
-                          <span className="text-[10px] font-bold text-[#3E5C46]">
-                            {track.modules_ar.length} {language === 'ar' ? 'مقاييس' : 'modules'}
-                          </span>
+                  {allTracks.map((track) => {
+                    const isGlobal = globalTracks.some(g => g.id === track.id);
+                    return (
+                      <div 
+                        key={track.id} 
+                        className={`p-6 rounded-2xl flex flex-col justify-between min-h-[170px] relative transition-all duration-300 hover:bg-[#EBDCBE] border-t-4 ${isGlobal ? 'bg-[#F3E4C9]/70 border-[#CCD67F]' : 'bg-[#F3E4C9] border-[#5C7449]'}`}
+                      >
+                        <div>
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex items-center gap-1.5">
+                              <span className="px-2.5 py-0.5 bg-[#CCD67F] text-[#3E5C46] text-[10px] font-bold rounded-full">
+                                {getCategoryLabel(track.category)}
+                              </span>
+                              {isGlobal && (
+                                <span className="px-2 py-0.5 bg-[#3E5C46] text-[#F3E4C9] text-[9px] font-black rounded-full uppercase">
+                                  {language === 'ar' ? '🌐 عام' : '🌐 Global'}
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-[10px] font-bold text-[#3E5C46]">
+                              {track.modules_ar.length} {language === 'ar' ? 'مقاييس' : 'modules'}
+                            </span>
+                          </div>
+
+                          <h4 className="text-lg font-bold text-[#3E5C46] mb-2 leading-snug">
+                            {language === 'ar' ? track.title_ar : track.title_fr}
+                          </h4>
                         </div>
 
-                        <h4 className="text-lg font-bold text-[#3E5C46] mb-2 leading-snug">
-                          {language === 'ar' ? track.title_ar : track.title_fr}
-                        </h4>
+                        <div className="flex justify-between items-center mt-4 pt-3 border-t border-[#5C7449]/20">
+                          <span className="text-[10px] text-[#5C7449] font-semibold">
+                            {isGlobal 
+                              ? (language === 'ar' ? 'مسار مشترك (الإدارة العامة)' : 'Parcours commun (Global)') 
+                              : (language === 'ar' ? 'مسار تكويني مخصص' : 'Parcours personnalisé')}
+                          </span>
+                          
+                          <button 
+                            onClick={() => setSelectedTrack(track)}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#3E5C46] hover:underline"
+                          >
+                            <Info className="w-3.5 h-3.5" />
+                            {language === 'ar' ? 'عرض البرنامج' : 'Voir syllabus'}
+                          </button>
+                        </div>
                       </div>
-
-                      <div className="flex justify-between items-center mt-4 pt-3 border-t border-[#5C7449]/20">
-                        <span className="text-[10px] text-[#5C7449] font-semibold">
-                          {language === 'ar' ? 'مسار تكويني مخصص' : 'Parcours personnalisé'}
-                        </span>
-                        
-                        <button 
-                          onClick={() => setSelectedTrack(track)}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#3E5C46] hover:underline"
-                        >
-                          <Info className="w-3.5 h-3.5" />
-                          {language === 'ar' ? 'عرض البرنامج' : 'Voir syllabus'}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </section>
@@ -834,7 +930,7 @@ export default function CompanyAdminPage() {
               const completedPercent = totalTrainees > 0 ? Math.round((completedTrainees / totalTrainees) * 100) : 0;
               const activePercent = totalTrainees > 0 ? 100 - completedPercent : 0;
 
-              const activeEnrollments = companyTracks.map(track => {
+              const activeEnrollments = allTracks.map(track => {
                 const count = trainees.filter(t => t.trackId === track.id).length;
                 return {
                   id: track.id,
@@ -929,7 +1025,7 @@ export default function CompanyAdminPage() {
                     </div>
 
                     <div className="flex-grow flex flex-col justify-center min-h-[120px]">
-                      {displayedTracks.length > 0 && companyTracks.length > 0 ? (
+                      {displayedTracks.length > 0 && allTracks.length > 0 ? (
                         <svg viewBox="0 0 400 160" className="w-full h-auto">
                           {displayedTracks.map((item, index) => {
                             const maxCount = Math.max(...displayedTracks.map(t => t.count), 1);
@@ -1272,7 +1368,7 @@ export default function CompanyAdminPage() {
                   : 'Inscrire un nouvel agent à un parcours et définir son échéance d’étude.'}
               </p>
 
-              {companyTracks.length === 0 ? (
+              {allTracks.length === 0 ? (
                 <div className="p-4 bg-amber-100 border border-amber-200 text-amber-900 rounded-xl text-xs font-semibold leading-relaxed">
                   {language === 'ar' ? 'يرجى تهيئة رتب ومسارات للمؤسسة أولاً من تبويب الرتب لتتمكن من إلحاق الموظفين بها!' : 'Veuillez configurer vos parcours/grades d’abord depuis l’onglet Ranks pour pouvoir y inscrire vos employés.'}
                 </div>
@@ -1315,11 +1411,25 @@ export default function CompanyAdminPage() {
                       onChange={(e) => setTargetTrackId(e.target.value)}
                       className="underline-input text-xs font-bold text-[#3E5C46] bg-transparent py-2.5"
                     >
-                      {companyTracks.map((track) => (
-                        <option key={track.id} value={track.id} className="text-[#3E5C46] bg-[#fbf8f3] font-bold text-xs">
-                          {language === 'ar' ? track.title_ar : track.title_fr}
-                        </option>
-                      ))}
+                      <option value="" disabled className="bg-[#fbf8f3]">{language === 'ar' ? '-- اختر رتبة تكوينية --' : '-- Choisir un grade --'}</option>
+                      {globalTracks.length > 0 && (
+                        <optgroup label={language === 'ar' ? '🌐 مسارات مشتركة' : '🌐 Parcours Globaux'}>
+                          {globalTracks.map(track => (
+                            <option key={track.id} value={track.id} className="bg-[#fbf8f3]">
+                              {language === 'ar' ? track.title_ar : track.title_fr} ({getCategoryLabel(track.category)})
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {companyTracks.length > 0 && (
+                        <optgroup label={language === 'ar' ? '🏢 مسارات المؤسسة' : '🏢 Parcours Propres'}>
+                          {companyTracks.map(track => (
+                            <option key={track.id} value={track.id} className="bg-[#fbf8f3]">
+                              {language === 'ar' ? track.title_ar : track.title_fr} ({getCategoryLabel(track.category)})
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
                     </select>
                   </div>
 
@@ -1776,45 +1886,105 @@ export default function CompanyAdminPage() {
                 </div>
               </div>
 
-              {lessons.length === 0 ? (
+              {globalLessons.length === 0 && lessons.length === 0 ? (
                 <div className="p-12 text-center bg-[#F3E4C9]/20 rounded-2xl border border-dashed border-[#5C7449]/30 text-[#5C7449] font-bold text-xs">
                   {language === 'ar' ? 'لا توجد دروس مرفوعة بعد. استخدم النموذج الجانبي لرفع أول ملف PDF لموظفيك!' : 'Aucun document PDF téléversé pour le moment.'}
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
-                  {lessons.map((lesson) => (
-                    <div 
-                      key={lesson.id}
-                      className="p-5 rounded-2xl bg-[#CCD67F]/10 border border-[#CCD67F]/40 flex items-center justify-between gap-4"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="bg-[#3E5C46] text-[#F3E4C9] p-3 rounded-xl">
-                          <FileText className="w-6 h-6" />
-                        </div>
-                        <div>
-                          <span className="text-[9px] px-2 py-0.5 bg-[#3E5C46] text-[#F3E4C9] font-black uppercase rounded-md tracking-wider">
-                            {lesson.moduleTitle}
-                          </span>
-                          <h4 className="text-base font-extrabold text-[#3E5C46] mt-1 leading-tight">
-                            {lesson.title}
-                          </h4>
-                          <div className="flex items-center gap-2 mt-1.5 text-[10px] text-[#5C7449] font-semibold">
-                            <span className="underline font-mono">{lesson.fileName}</span>
-                            <span>•</span>
-                            <span>{new Date(lesson.createdAt).toLocaleString(language === 'ar' ? 'ar-DZ' : 'fr-FR')}</span>
-                          </div>
-                        </div>
-                      </div>
 
-                      <button
-                        onClick={() => handleDeleteLesson(lesson.id, lesson.title)}
-                        className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors"
-                        title={language === 'ar' ? 'حذف هذا الدرس' : 'Supprimer'}
-                      >
-                        <Trash2 className="w-4.5 h-4.5" />
-                      </button>
-                    </div>
-                  ))}
+                  {/* Global lessons from Super Admin */}
+                  {globalLessons.length > 0 && (
+                    <>
+                      <div className="flex items-center gap-2 py-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-[#3E5C46] bg-[#CCD67F]/40 px-3 py-1 rounded-full">
+                          🌐 {language === 'ar' ? 'دروس المنصة العامة (مشتركة)' : 'Leçons Plateforme (Globales)'}
+                        </span>
+                        <div className="flex-1 h-px bg-[#CCD67F]/40"></div>
+                      </div>
+                      {globalLessons.map((lesson) => (
+                        <div 
+                          key={lesson.id}
+                          className="p-5 rounded-2xl bg-[#CCD67F]/15 border border-[#CCD67F]/50 flex items-center justify-between gap-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="bg-[#5C7449] text-[#F3E4C9] p-3 rounded-xl">
+                              <FileText className="w-6 h-6" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[9px] px-2 py-0.5 bg-[#5C7449] text-[#F3E4C9] font-black uppercase rounded-md tracking-wider">
+                                  {lesson.moduleTitle}
+                                </span>
+                                <span className="text-[9px] px-2 py-0.5 bg-[#CCD67F] text-[#3E5C46] font-black uppercase rounded-md tracking-wider">
+                                  {language === 'ar' ? 'عام' : 'Global'}
+                                </span>
+                              </div>
+                              <h4 className="text-base font-extrabold text-[#3E5C46] leading-tight">
+                                {lesson.title}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-[#5C7449] font-semibold">
+                                <span className="underline font-mono">{lesson.fileName}</span>
+                                <span>•</span>
+                                <span>{new Date(lesson.createdAt).toLocaleString(language === 'ar' ? 'ar-DZ' : 'fr-FR')}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <span className="text-[9px] text-[#5C7449] font-bold shrink-0">
+                            {language === 'ar' ? 'مشترك' : 'Commun'}
+                          </span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {/* Company-specific lessons */}
+                  {lessons.length > 0 && (
+                    <>
+                      {globalLessons.length > 0 && (
+                        <div className="flex items-center gap-2 py-1">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[#3E5C46] bg-[#F3E4C9] px-3 py-1 rounded-full">
+                            🏢 {language === 'ar' ? 'دروس المؤسسة الخاصة' : 'Leçons Propres à l\'Établissement'}
+                          </span>
+                          <div className="flex-1 h-px bg-[#F3E4C9]"></div>
+                        </div>
+                      )}
+                      {lessons.map((lesson) => (
+                        <div 
+                          key={lesson.id}
+                          className="p-5 rounded-2xl bg-[#CCD67F]/10 border border-[#CCD67F]/40 flex items-center justify-between gap-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="bg-[#3E5C46] text-[#F3E4C9] p-3 rounded-xl">
+                              <FileText className="w-6 h-6" />
+                            </div>
+                            <div>
+                              <span className="text-[9px] px-2 py-0.5 bg-[#3E5C46] text-[#F3E4C9] font-black uppercase rounded-md tracking-wider">
+                                {lesson.moduleTitle}
+                              </span>
+                              <h4 className="text-base font-extrabold text-[#3E5C46] mt-1 leading-tight">
+                                {lesson.title}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-[#5C7449] font-semibold">
+                                <span className="underline font-mono">{lesson.fileName}</span>
+                                <span>•</span>
+                                <span>{new Date(lesson.createdAt).toLocaleString(language === 'ar' ? 'ar-DZ' : 'fr-FR')}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleDeleteLesson(lesson.id, lesson.title)}
+                            className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors"
+                            title={language === 'ar' ? 'حذف هذا الدرس' : 'Supprimer'}
+                          >
+                            <Trash2 className="w-4.5 h-4.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
                 </div>
               )}
             </div>
@@ -1831,9 +2001,9 @@ export default function CompanyAdminPage() {
                   : 'Associez un document de formation aux chapitres officiels pour vos stagiaires.'}
               </p>
 
-              {companyTracks.length === 0 ? (
+              {allTracks.length === 0 ? (
                 <div className="p-4 bg-amber-100 border border-amber-200 text-amber-900 rounded-xl text-xs font-semibold leading-relaxed">
-                  {language === 'ar' ? 'يرجى إعداد مسارات ورتب للمؤسسة أولاً من تبويب الرتب قبل رفع الدروس!' : 'Créez un grade d’abord pour pouvoir y lier des documents.'}
+                  {language === 'ar' ? 'يرجى إعداد مسارات ورتب للمؤسسة أولاً من تبويب الرتب قبل رفع الدروس!' : 'Créez un grade d\'abord pour pouvoir y lier des documents.'}
                 </div>
               ) : (
                 <form onSubmit={handleAddLesson} className="flex flex-col gap-4 text-xs font-semibold text-[#3E5C46]">
@@ -1850,37 +2020,53 @@ export default function CompanyAdminPage() {
                   </div>
 
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'الرتبة التكوينية المستهدفة' : 'Formation Associée'}</label>
-                    <select
-                      value={newLessonTrackId}
-                      onChange={(e) => setNewLessonTrackId(e.target.value)}
-                      className="underline-input bg-transparent py-2.5"
-                    >
-                      {companyTracks.map((track) => (
-                        <option key={track.id} value={track.id} className="text-[#3E5C46] bg-[#fbf8f3] font-bold text-xs">
-                          {language === 'ar' ? track.title_ar : track.title_fr}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'المقياس التكويني المرتبط' : 'Module de la Leçon'}</label>
-                    <select
-                      value={newLessonModule}
-                      onChange={(e) => setNewLessonModule(e.target.value)}
-                      className="underline-input bg-transparent py-2.5"
-                    >
-                      {(() => {
-                        const tr = companyTracks.find(t => t.id === newLessonTrackId);
-                        if (!tr) return <option value="">---</option>;
-                        return (language === 'ar' ? tr.modules_ar : tr.modules_fr).map((mod, i) => (
-                          <option key={i} value={mod} className="text-[#3E5C46] bg-[#fbf8f3] font-bold text-xs">
-                            {mod}
-                          </option>
-                        ));
-                      })()}
-                    </select>
+                    <label className="text-[10px] uppercase font-bold tracking-wider mb-1">{language === 'ar' ? 'الرتب المستهدفة (يمكن اختيار متعدد)' : 'Formations Associées (Choix multiples)'}</label>
+                    <div className="flex flex-col gap-2 max-h-40 overflow-y-auto border border-[#5C7449]/30 rounded-lg p-2 bg-[#fbf8f3]/50">
+                      {globalTracks.length > 0 && (
+                        <>
+                          <span className="text-[9px] font-black uppercase tracking-wider text-[#5C7449] px-1 pt-1">🌐 {language === 'ar' ? 'مسارات مشتركة' : 'Parcours Globaux'}</span>
+                          {globalTracks.map((track) => (
+                            <label key={track.id} className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#3E5C46] pl-2">
+                              <input 
+                                type="checkbox"
+                                checked={newLessonTrackIds.includes(track.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setNewLessonTrackIds(prev => [...prev, track.id]);
+                                  } else {
+                                    setNewLessonTrackIds(prev => prev.filter(id => id !== track.id));
+                                  }
+                                }}
+                                className="accent-[#5C7449]"
+                              />
+                              {language === 'ar' ? track.title_ar : track.title_fr}
+                            </label>
+                          ))}
+                        </>
+                      )}
+                      {companyTracks.length > 0 && (
+                        <>
+                          <span className="text-[9px] font-black uppercase tracking-wider text-[#5C7449] px-1 pt-1">🏢 {language === 'ar' ? 'مسارات المؤسسة' : 'Parcours Propres'}</span>
+                          {companyTracks.map((track) => (
+                            <label key={track.id} className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#3E5C46] pl-2">
+                              <input 
+                                type="checkbox"
+                                checked={newLessonTrackIds.includes(track.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setNewLessonTrackIds(prev => [...prev, track.id]);
+                                  } else {
+                                    setNewLessonTrackIds(prev => prev.filter(id => id !== track.id));
+                                  }
+                                }}
+                                className="accent-[#3E5C46]"
+                              />
+                              {language === 'ar' ? track.title_ar : track.title_fr}
+                            </label>
+                          ))}
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   {/* File Pick Drag-and-drop */}
@@ -1914,6 +2100,107 @@ export default function CompanyAdminPage() {
                   </button>
                 </form>
               )}
+            </div>
+
+          </div>
+        )}
+
+        {/* ==================================== TAB: COMPANY MESSAGES ==================================== */}
+        {activeTab === 'messages' && (
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 animate-fadeIn">
+            
+            {/* Messages List */}
+            <div className="xl:col-span-8">
+              <h3 className="text-xl font-bold text-[#3E5C46] mb-6 border-b border-[#F3E4C9] pb-2 flex justify-between items-center">
+                <span>{language === 'ar' ? 'سجل الإعلانات المرسلة' : 'Historique des Annonces'}</span>
+                <span className="text-xs bg-[#CCD67F] text-[#3E5C46] px-3 py-1 rounded-full font-black">
+                  {companyMessages.length} {language === 'ar' ? 'إعلان' : 'Annonce(s)'}
+                </span>
+              </h3>
+
+              {companyMessages.length === 0 ? (
+                <div className="text-center py-12 text-[#5C7449]/70 border-2 border-dashed border-[#F3E4C9] rounded-2xl">
+                  <MessageSquare className="w-10 h-10 mx-auto mb-3 text-[#F3E4C9]" />
+                  <p className="font-bold text-sm">
+                    {language === 'ar' ? 'لم تقم بإرسال أي إعلانات بعد.' : 'Aucune annonce envoyée.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {companyMessages.map((msg) => (
+                    <div key={msg.id} className="bg-white p-5 rounded-2xl border border-[#5C7449]/10 shadow-sm flex flex-col sm:flex-row sm:items-start justify-between gap-4 transition-all hover:shadow-md">
+                      <div className="flex items-start gap-4 flex-grow">
+                        <div className="bg-[#CCD67F]/20 p-2.5 rounded-xl shrink-0 mt-1">
+                          <MessageSquare className="w-5 h-5 text-[#5C7449]" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-black text-[#3E5C46] leading-tight mb-1">
+                            {msg.title}
+                          </h4>
+                          <p className="text-xs text-[#2d2621]/80 mb-2 whitespace-pre-wrap">{msg.content}</p>
+                          <div className="text-[10px] text-[#5C7449] font-semibold">
+                            <span>{new Date(msg.createdAt).toLocaleString(language === 'ar' ? 'ar-DZ' : 'fr-FR')}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleDeleteCompanyMessage(msg.id, msg.title)}
+                        className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors self-start shrink-0"
+                        title={language === 'ar' ? 'حذف الإعلان' : 'Supprimer l\'annonce'}
+                      >
+                        <Trash2 className="w-4.5 h-4.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Upload Message Form */}
+            <div className="xl:col-span-4 bg-[#F3E4C9] p-6 sm:p-8 rounded-2xl w-full">
+              <h3 className="text-lg font-bold text-[#3E5C46] mb-2 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-[#3E5C46]" />
+                {language === 'ar' ? 'إرسال إعلان جديد' : 'Nouvelle Annonce'}
+              </h3>
+              <p className="text-xs text-[#5C7449] mb-6 leading-normal">
+                {language === 'ar'
+                  ? 'سيظهر هذا الإعلان في لوحة تحكم جميع الموظفين التابعين لمؤسستك.'
+                  : 'Cette annonce sera visible sur le tableau de bord de tous vos employés.'}
+              </p>
+
+              <form onSubmit={handleAddCompanyMessage} className="flex flex-col gap-4 text-xs font-semibold text-[#3E5C46]">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'عنوان الإعلان' : 'Titre de l\'annonce'}</label>
+                  <input
+                    type="text"
+                    value={newMessageTitle}
+                    onChange={(e) => setNewMessageTitle(e.target.value)}
+                    placeholder={language === 'ar' ? 'مثال: تحديث حول مواعيد التدريب' : 'Ex: Mise à jour des horaires'}
+                    className="underline-input"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] uppercase font-bold tracking-wider">{language === 'ar' ? 'نص الإعلان' : 'Contenu du message'}</label>
+                  <textarea
+                    value={newMessageContent}
+                    onChange={(e) => setNewMessageContent(e.target.value)}
+                    placeholder={language === 'ar' ? 'اكتب تفاصيل الإعلان هنا...' : 'Écrivez les détails ici...'}
+                    className="underline-input min-h-[100px]"
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn-pill-sage w-full py-3 mt-4 text-xs font-bold flex justify-center items-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  {language === 'ar' ? 'نشر الإعلان' : 'Publier l\'annonce'}
+                </button>
+              </form>
             </div>
 
           </div>
@@ -2178,11 +2465,24 @@ export default function CompanyAdminPage() {
                     required
                   >
                     <option value="" disabled className="bg-[#fbf8f3]">{language === 'ar' ? '-- اختر رتبة تكوينية --' : '-- Choisir un grade --'}</option>
-                    {companyTracks.map(track => (
-                      <option key={track.id} value={track.id} className="bg-[#fbf8f3]">
-                        {language === 'ar' ? track.title_ar : track.title_fr} ({getCategoryLabel(track.category)})
-                      </option>
-                    ))}
+                    {globalTracks.length > 0 && (
+                      <optgroup label={language === 'ar' ? '🌐 مسارات مشتركة' : '🌐 Parcours Globaux'}>
+                        {globalTracks.map(track => (
+                          <option key={track.id} value={track.id} className="bg-[#fbf8f3]">
+                            {language === 'ar' ? track.title_ar : track.title_fr} ({getCategoryLabel(track.category)})
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {companyTracks.length > 0 && (
+                      <optgroup label={language === 'ar' ? '🏢 مسارات المؤسسة' : '🏢 Parcours Propres'}>
+                        {companyTracks.map(track => (
+                          <option key={track.id} value={track.id} className="bg-[#fbf8f3]">
+                            {language === 'ar' ? track.title_ar : track.title_fr} ({getCategoryLabel(track.category)})
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                 </div>
 
