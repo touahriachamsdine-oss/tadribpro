@@ -1798,7 +1798,7 @@ export default function CompanyAdminPage() {
                       type="text"
                       value={newRankSectorAr}
                       onChange={(e) => setNewRankSectorAr(e.target.value)}
-                      placeholder="الإدارة العامة"
+                      placeholder="عام و خاص"
                       className="underline-input text-right"
                       required
                     />
@@ -1809,7 +1809,7 @@ export default function CompanyAdminPage() {
                       type="text"
                       value={newRankSectorFr}
                       onChange={(e) => setNewRankSectorFr(e.target.value)}
-                      placeholder="Admin Générale"
+                      placeholder="Public et Privé"
                       className="underline-input"
                       required
                     />
@@ -1851,7 +1851,7 @@ export default function CompanyAdminPage() {
                     rows={3}
                     value={newRankModulesArStr}
                     onChange={(e) => setNewRankModulesArStr(e.target.value)}
-                    placeholder={`مثال:\nقوانين الوظيف العمومي\nالتحرير الإداري المتقدم\nالقانون الدستوري المالي`}
+                    placeholder={`مثال:\nقوانين الوظيفة العمومية\nتحرير إداري\nالقانون الدستوري`}
                     className="underline-input bg-transparent text-right font-bold leading-relaxed whitespace-pre"
                     required
                   />
@@ -2013,7 +2013,7 @@ export default function CompanyAdminPage() {
                       type="text"
                       value={newLessonTitle}
                       onChange={(e) => setNewLessonTitle(e.target.value)}
-                      placeholder={language === 'ar' ? 'مثال: مدخل إلى أخلاقيات المهنة المالي' : 'Ex: Intro à la Déontologie Administrative'}
+                      placeholder={language === 'ar' ? 'مثال: مدخل إلى أخلاقيات المهنة والواجبات' : 'Ex: Intro à la Déontologie Administrative'}
                       className="underline-input"
                       required
                     />
