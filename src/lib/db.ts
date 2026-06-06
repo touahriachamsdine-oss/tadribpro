@@ -95,31 +95,12 @@ export interface CompanyMessage {
 
 // 1. Preloaded Official Career Tracks (from official Algerian career frameworks)
 export const OFFICIAL_TRACKS: TrainingTrack[] = [
-  // الأسلاك المشتركة (Corps Communs)
-  {
-    id: 'track-1',
-    title_ar: 'عون إدارة',
-    title_fr: "Agent d'Administration",
-    sector_ar: 'الأسلاك المشتركة',
-    sector_fr: 'Corps Communs',
-    category: 'joint',
-    modules_ar: ['قوانين الوظيفة العمومية الجزائرية', 'التحرير الإداري المبتدئ', 'معالجة النصوص وإعلام آلي أساسي', 'أخلاقيات المهنة والواجبات'],
-    modules_fr: ['Loi de la Fonction Publique Algérienne', 'Rédaction Administrative Débutante', 'Traitement de Texte & Informatique', 'Déontologie & Devoirs Professionnels']
-  },
-  {
-    id: 'track-2',
-    title_ar: 'ملحق الإدارة',
-    title_fr: "Attaché d'Administration",
-    sector_ar: 'الأسلاك المشتركة',
-    sector_fr: 'Corps Communs',
-    category: 'joint',
-    modules_ar: ['الصفقات العمومية وإبرامها', 'قانون الميزانية والمحاسبة العمومية', 'منهجية التحرير الإداري المتقدم', 'تقنيات الاتصال والتسيير'],
-    modules_fr: ['Passation des Marchés Publics', 'Budget & Comptabilité Publique', 'Méthodologie de Rédaction Avancée', 'Techniques de Communication & Management']
-  },
+  // ==================== I — الأسلاك المشتركة (Common Corps) ====================
+  // --- 1. التكوين التكميلي ما قبل الترقية (Pre-Promotion Supplementary Training) ---
   {
     id: 'track-3',
-    title_ar: 'مصرف',
-    title_fr: 'Administrateur',
+    title_ar: 'مصرف - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Administrateur - Formation Complémentaire Pré-Promotion',
     sector_ar: 'الأسلاك المشتركة',
     sector_fr: 'Corps Communs',
     category: 'joint',
@@ -127,9 +108,29 @@ export const OFFICIAL_TRACKS: TrainingTrack[] = [
     modules_fr: ['Droit Administratif & Contentieux', 'Gestion des RH dans la Fonction Publique', 'Finances Publiques & Fiscalité Locale', 'Organisation Administrative Centrale et Locale']
   },
   {
+    id: 'track-6',
+    title_ar: 'مساعد مصرف - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Administrateur Assistant - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['مدخل إلى القانون العام', 'أسس التحرير والمراسلات الإدارية', 'تنظيم المكاتب والتوثيق', 'الإعلام الإداري الإلكتروني'],
+    modules_fr: ['Introduction au Droit Public', 'Bases de Rédaction & Correspondance', 'Organisation des Bureaux & Archivage', 'Informatique Administrative & E-Gov']
+  },
+  {
+    id: 'track-2',
+    title_ar: 'ملحق الإدارة - تكوين تكميلي ما قبل الترقية',
+    title_fr: "Attaché d'Administration - Formation Complémentaire Pré-Promotion",
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['الصفقات العمومية وإبرامها', 'قانون الميزانية والمحاسبة العمومية', 'منهجية التحرير الإداري المتقدم', 'تقنيات الاتصال والتسيير'],
+    modules_fr: ['Passation des Marchés Publics', 'Budget & Comptabilité Publique', 'Méthodologie de Rédaction Avancée', 'Techniques de Communication & Management']
+  },
+  {
     id: 'track-4',
-    title_ar: 'محاسب إداري رئيسي',
-    title_fr: 'Comptable Administratif Principal',
+    title_ar: 'محاسب إداري رئيسي - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Comptable Administratif Principal - Formation Complémentaire Pré-Promotion',
     sector_ar: 'الأسلاك المشتركة',
     sector_fr: 'Corps Communs',
     category: 'joint',
@@ -137,9 +138,49 @@ export const OFFICIAL_TRACKS: TrainingTrack[] = [
     modules_fr: ['Comptabilité Publique Appliquée', 'Droit Fiscal & Taxes en Algérie', 'Contrôle Financier & Budgétaire', 'Systèmes Informatiques Comptables']
   },
   {
+    id: 'track-11',
+    title_ar: 'محاسب إداري - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Comptable Administratif - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['مبادئ المحاسبة العامة والعمومية', 'تسيير الميزانية والمصاريف', 'الجباية الإدارية والمراقبة', 'برمجيات المحاسبة الأساسية'],
+    modules_fr: ['Principes de Comptabilité Générale', 'Gestion Budgétaire & Dépenses', 'Fiscalité Administrative & Contrôle', 'Logiciels de Comptabilité de Base']
+  },
+  {
+    id: 'track-12',
+    title_ar: 'مساعد مهندس مستوى أول في الإحصاء - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Ingénieur Assistant en Statistique Niveau 1 - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['التحليل الإحصائي للبيانات', 'منهجيات جمع العينات والمسح', 'برمجيات التحليل الإحصائي (SPSS/R)', 'الدراسات الديموغرافية والاجتماعية'],
+    modules_fr: ['Analyse Statistique des Données', 'Méthodologies d’Échantillonnage', 'Logiciels d’Analyse Statistique', 'Études Démographiques & Sociales']
+  },
+  {
+    id: 'track-13',
+    title_ar: 'مساعد مهندس من المستوى الأول في الإعلام الآلي - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Ingénieur Assistant en Informatique Niveau 1 - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['هندسة البرمجيات والويب', 'إدارة وتأمين الشبكات المحلية', 'تطوير وتسيير قواعد البيانات', 'أمن المعلومات والحوكمة الرقمية'],
+    modules_fr: ['Génie Logiciel & Web', 'Administration & Sécurité Réseaux', 'Développement & Gestion de BDD', 'Sécurité de l’Information & Gouvernance']
+  },
+  {
+    id: 'track-14',
+    title_ar: 'تقني سامي في الإحصاء - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Technicien Supérieur en Statistique - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['مبادئ الإحصاء الوصفي', 'تقنيات معالجة البيانات وجدولتها', 'تنظيم الاستمارات والتحقيقات الميدانية', 'الرياضيات التطبيقية والمعلوماتية'],
+    modules_fr: ['Principes de Statistique Descriptive', 'Traitement & Tabulation des Données', 'Enquêtes & Questionnaires de Terrain', 'Mathématiques Appliquées & Informatique']
+  },
+  {
     id: 'track-5',
-    title_ar: 'تقني سامي في الإعلام الآلي',
-    title_fr: 'Technicien Supérieur en Informatique',
+    title_ar: 'تقني سامي في الإعلام الآلي - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Technicien Supérieur en Informatique - Formation Complémentaire Pré-Promotion',
     sector_ar: 'الأسلاك المشتركة',
     sector_fr: 'Corps Communs',
     category: 'joint',
@@ -147,21 +188,84 @@ export const OFFICIAL_TRACKS: TrainingTrack[] = [
     modules_fr: ['Maintenance Réseaux & Matériel', 'Administration & Sécurité des Bases de Données', 'Progiciels & Systèmes Intégrés', 'Lois de Protection des Données Numériques']
   },
   {
-    id: 'track-6',
-    title_ar: 'مساعد مصرف',
-    title_fr: 'Administrateur Assistant',
+    id: 'track-15',
+    title_ar: 'كاتب مدينة رئيسي - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Secrétaire de Ville Principal - Formation Complémentaire Pré-Promotion',
     sector_ar: 'الأسلاك المشتركة',
     sector_fr: 'Corps Communs',
     category: 'joint',
-    modules_ar: ['مدخل إلى القانون العام', 'أسس التحرير والمراسلات الإدارية', 'تنظيم المكاتب والتوثيق', 'الإعلام الإداري الإلكتروني'],
-    modules_fr: ['Introduction au Droit Public', 'Bases de Rédaction & Correspondance', 'Organisation des Bureaux & Archivage', 'Informatique Administrative & E-Gov']
+    modules_ar: ['التحرير الإداري الإقليمي المحترف', 'تسيير الأرشيف والتوثيق البلدي', 'قوانين الحالة المدنية والمنازعات', 'مهارات سكرتارية الإدارة العليا'],
+    modules_fr: ['Rédaction Administrative Locale', 'Archivage & Documentation Municipale', 'Lois d’État Civil & Contentieux', 'Secrétariat de Direction Avancé']
   },
-  
-  // أسلاك دعم البحث (Soutien à la Recherche)
+  {
+    id: 'track-16',
+    title_ar: 'كاتب مدينة - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Secrétaire de Ville - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['تقنيات الأمانة والاستقبال', 'التحرير الإداري والمراسلات', 'تنظيم المكاتب والملفات البلدية', 'الإعلام الآلي المكتبي والتطبيقات'],
+    modules_fr: ['Techniques de Secrétariat & Accueil', 'Rédaction Administrative & Lettres', 'Organisation de Bureau & Dossiers', 'Bureautique & Applications Web']
+  },
+  {
+    id: 'track-1',
+    title_ar: 'عون إدارة - تكوين تكميلي ما قبل الترقية',
+    title_fr: "Agent d'Administration - Formation Complémentaire Pré-Promotion",
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['قوانين الوظيفة العمومية الجزائرية', 'التحرير الإداري المبتدئ', 'معالجة النصوص وإعلام آلي أساسي', 'أخلاقيات المهنة والواجبات'],
+    modules_fr: ['Loi de la Fonction Publique Algérienne', 'Rédaction Administrative Débutante', 'Traitement de Texte & Informatique', 'Déontologie & Devoirs Professionnels']
+  },
+
+  // --- 2. التكوين التحضيري أثناء فترة التربص (Preparatory Training During Internship) ---
+  {
+    id: 'track-17',
+    title_ar: 'ملحق إدارة - تكوين تحضيري أثناء التربص',
+    title_fr: "Attaché d'Administration - Formation Préparatoire Pendant Stage",
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['الاندماج في بيئة العمل الإداري', 'الهياكل التنظيمية للوظيفة العمومية', 'منهجية التحرير الرسمي والتواصل', 'حقوق وواجبات الموظف المتربص'],
+    modules_fr: ['Intégration Professionnelle', 'Structures Administratives Publiques', 'Méthodologie de Rédaction Officielle', 'Droits & Devoirs du Stagiaire']
+  },
+  {
+    id: 'track-18',
+    title_ar: 'عون مكتب - تكوين تحضيري أثناء التربص',
+    title_fr: "Agent de Bureau - Formation Préparatoire Pendant Stage",
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['تقنيات الاستقبال وتوجيه الجمهور', 'تنظيم وحفظ المستندات المكتوبة', 'أبجديات الإعلام الآلي المكتبي', 'السلوك والآداب المهنية'],
+    modules_fr: ['Techniques d’Accueil & Orientation', 'Organisation & Classement Physique', 'Bases de la Bureautique', 'Savoir-être & Discipline']
+  },
+  {
+    id: 'track-19',
+    title_ar: 'عون إدارة رئيسي - تكوين تحضيري أثناء التربص',
+    title_fr: "Agent d'Administration Principal - Formation Préparatoire Pendant Stage",
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['التسيير الإداري وسجل المراسلات', 'قواعد صياغة المراسلات والتقارير', 'إعلام آلي إداري ومعالجة النصوص', 'مبادئ المسؤولية والانضباط الإداري'],
+    modules_fr: ['Gestion Administrative & Courriers', 'Rédaction de Notes & Rapports', 'Bureautique Appliquée & Saisie', 'Responsabilité & Discipline Administrative']
+  },
+  {
+    id: 'track-20',
+    title_ar: 'عون إدارة - تكوين تحضيري أثناء التربص',
+    title_fr: "Agent d'Administration - Formation Préparatoire Pendant Stage",
+    sector_ar: 'الأسلاك المشتركة',
+    sector_fr: 'Corps Communs',
+    category: 'joint',
+    modules_ar: ['مدخل للوظيفة العمومية والتربص', 'التحرير الإداري الأولي والمراسلات', 'تنظيم المكاتب والتصنيف الورقي', 'الواجبات السلوكية للموظف الجديد'],
+    modules_fr: ['Introduction à la Fonction Publique', 'Rédaction Initiale & Courriers', 'Classement & Organisation de Bureau', 'Déontologie de l’Agent Stagiaire']
+  },
+
+  // ==================== II — أسلاك مستخدمي دعم البحث (Research Support Corps) ====================
+  // --- 1. التكوين التكميلي ما قبل الترقية ---
   {
     id: 'track-7',
-    title_ar: 'مصرف البحث مستوى 1',
-    title_fr: 'Administrateur de Recherche Niveau 1',
+    title_ar: 'مصرف البحث مستوى 1 - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Administrateur de Recherche Niveau 1 - Formation Complémentaire Pré-Promotion',
     sector_ar: 'أسلاك دعم البحث',
     sector_fr: 'Soutien à la Recherche',
     category: 'research',
@@ -169,21 +273,43 @@ export const OFFICIAL_TRACKS: TrainingTrack[] = [
     modules_fr: ['Réglementation de la Recherche en Algérie', 'Gestion du Financement des Projets', 'Méthodologie d’Évaluation Scientifique', 'Éthique de Recherche & Propriété Intellectuelle']
   },
   {
+    id: 'track-21',
+    title_ar: 'مساعد رئيسي لتسيير البحث - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Assistant Principal de Gestion de Recherche - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'أسلاك دعم البحث',
+    sector_fr: 'Soutien à la Recherche',
+    category: 'research',
+    modules_ar: ['التنسيق الإداري لمخابر البحث', 'تسيير المقتنيات العلمية والأجهزة', 'قواعد البيانات الببليوغرافية والنشر', 'تنظيم الملتقيات العلمية وتوثيقها'],
+    modules_fr: ['Coordination Administrative des Labos', 'Gestion des Équipements Scientifiques', 'Bases de Données & Édition Scientifique', 'Organisation des Séminaires & Colloques']
+  },
+  {
     id: 'track-8',
-    title_ar: 'مساعد تسيير البحث',
-    title_fr: 'Assistant de Gestion de Recherche',
+    title_ar: 'مساعد تسيير البحث - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Assistant de Gestion de Recherche - Formation Complémentaire Pré-Promotion',
     sector_ar: 'أسلاك دعم البحث',
     sector_fr: 'Soutien à la Recherche',
     category: 'research',
     modules_ar: ['إدارة الأرشيف العلمي والتقني', 'تقنيات سكرتارية المخابر العلمية', 'تطبيقات معالجة المعطيات الإحصائية', 'الاتصال الإداري العلمي'],
     modules_fr: ['Gestion des Archives Scientifiques', 'Secrétariat des Laboratoires de Recherche', 'Logiciels Statistiques & Analyse', 'Communication Administrative Scientifique']
   },
+  // --- 2. التكوين التحضيري أثناء فترة التربص ---
+  {
+    id: 'track-22',
+    title_ar: 'مساعد تسيير البحث - تكوين تحضيري أثناء التربص',
+    title_fr: 'Assistant de Gestion de Recherche - Formation Préparatoire Pendant Stage',
+    sector_ar: 'أسلاك دعم البحث',
+    sector_fr: 'Soutien à la Recherche',
+    category: 'research',
+    modules_ar: ['الاندماج المهني في هيئات البحث العلمي', 'هياكل التمويل والبحث في الجزائر', 'الأرشفة الرقمية والتوثيق للمشاريع', 'أخلاقيات وسلامة العمل المخبري الجديد'],
+    modules_fr: ['Intégration au Secteur de la Recherche', 'Structures de Financement en Algérie', 'Archivage Numérique des Projets', 'Sécurité & Éthique Professionnelle du Labo']
+  },
 
-  // الأسلاك الإقليمية (Administration Régionale)
+  // ==================== III — الأسلاك الإقليمية (Regional Corps) ====================
+  // --- 1. التكوين التكميلي ما قبل الترقية ---
   {
     id: 'track-9',
-    title_ar: 'مصرف إقليمي',
-    title_fr: 'Administrateur Régional',
+    title_ar: 'مصرف إقليمي - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Administrateur Régional - Formation Complémentaire Pré-Promotion',
     sector_ar: 'الأسلاك الإقليمية',
     sector_fr: 'Administration Régionale',
     category: 'regional',
@@ -192,13 +318,74 @@ export const OFFICIAL_TRACKS: TrainingTrack[] = [
   },
   {
     id: 'track-10',
-    title_ar: 'ملحق الإدارة الإقليمية',
-    title_fr: "Attaché d'Administration Régionale",
+    title_ar: 'ملحق الإدارة الإقليمية - تكوين تكميلي ما قبل الترقية',
+    title_fr: "Attaché d'Administration Régionale - Formation Complémentaire Pré-Promotion",
     sector_ar: 'الأسلاك الإقليمية',
     sector_fr: 'Administration Régionale',
     category: 'regional',
     modules_ar: ['تنظيم وتسيير المكاتب المحلية', 'الحالة المدنية والمنازعات البلدية', 'التنسيق والاتصال المجتمعي', 'تحرير التقارير والمحاضر الرسمية'],
     modules_fr: ['Organisation & Gestion Municipale', 'État Civil & Contentieux Communaux', 'Coordination & Communication Sociale', 'Rédaction de Rapports & Procès-Verbaux']
+  },
+  {
+    id: 'track-23',
+    title_ar: 'محاسب الإدارة الإقليمية - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Comptable de l\'Administration Régionale - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك الإقليمية',
+    sector_fr: 'Administration Régionale',
+    category: 'regional',
+    modules_ar: ['ميزانية الجماعات المحلية وإجراءاتها', 'محاسبة النفقات والإيرادات البلدية', 'تقنيات الجباية والرسوم المحلية', 'التطبيقات المحاسبية الإلكترونية للبلديات'],
+    modules_fr: ['Budget des Collectivités & Procédures', 'Comptabilité des Recettes & Dépenses APC', 'Fiscalité Locale & Taxes Municipales', 'Applications Comptables Locales (E-APC)']
+  },
+  {
+    id: 'track-24',
+    title_ar: 'محاسب رئيسي للإدارة الإقليمية - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Comptable Principal de l\'Administration Régionale - Formation Complémentaire Pré-Promotion',
+    sector_ar: 'الأسلاك الإقليمية',
+    sector_fr: 'Administration Régionale',
+    category: 'regional',
+    modules_ar: ['الرقابة المالية والتدقيق للجماعات المحلية', 'تسيير أزمة الميزانية وصناديق الضمان', 'منازعات الصفقات والمالية المحلية', 'عصرنة الأنظمة المحاسبية البلدية'],
+    modules_fr: ['Contrôle Financier & Audit des Collectivités', 'Gestion de Crise Budgétaire & Fonds Commun', 'Contentieux des Marchés Municipaux', 'Modernisation des Systèmes de Comptabilité APC']
+  },
+  // --- 2. التكوين التحضيري أثناء فترة التربص ---
+  {
+    id: 'track-25',
+    title_ar: 'ملحق الإدارة الإقليمية - تكوين تحضيري أثناء التربص',
+    title_fr: "Attaché d'Administration Régionale - Formation Préparatoire Pendant Stage",
+    sector_ar: 'الأسلاك الإقليمية',
+    sector_fr: 'Administration Régionale',
+    category: 'regional',
+    modules_ar: ['الاندماج بالبلديات والولايات ومفهوم المرفق', 'الهيكل التنظيمي للمجلس الشعبي البلدي', 'التحرير الإداري للمذكرات والتبليغات المحلية', 'حقوق وواجبات الموظف الإقليمي المتربص'],
+    modules_fr: ['Intégration aux APC/Wilayas & Service Public', 'Organigramme de l’APC & Fonctionnement', 'Rédaction Initiale de Notes Locales', 'Statut du Stagiaire de l’Administration Locale']
+  },
+  {
+    id: 'track-26',
+    title_ar: 'ملحق رئيسي للإدارة الإقليمية - تكوين تحضيري أثناء التربص',
+    title_fr: "Attaché Principal d'Administration Régionale - Formation Préparatoire Pendant Stage",
+    sector_ar: 'الأسلاك الإقليمية',
+    sector_fr: 'Administration Régionale',
+    category: 'regional',
+    modules_ar: ['التنسيق الإداري المحلي للبرامج البلدية', 'تسيير الشكاوى والعلاقة مع المواطن', 'تحرير مشاريع المداولات والقرارات المحلية', 'المسؤولية الإدارية والمهنية للموظف المتربص'],
+    modules_fr: ['Coordination Locale des Programmes Municipaux', 'Gestion des Réclamations & Relation Citoyen', 'Rédaction de Projets de Délibérations APC', 'Responsabilité Administrative de l’Agent Stagiaire']
+  },
+  {
+    id: 'track-27',
+    title_ar: 'محاسب الإدارة الإقليمية - تكوين تحضيري أثناء التربص',
+    title_fr: 'Comptable de l\'Administration Régionale - Formation Préparatoire Pendant Stage',
+    sector_ar: 'الأسلاك الإقليمية',
+    sector_fr: 'Administration Régionale',
+    category: 'regional',
+    modules_ar: ['أسس المحاسبة العمومية للجماعات المحلية', 'هيكل ميزانية البلدية (تسيير وتجهيز)', 'مسار النفقات وتفويض الآمرين بالصرف', 'قوانين المحاسب العمومي والالتزامات'],
+    modules_fr: ['Bases de Comptabilité Publique Locale', 'Structure du Budget APC (Secteur & Équipement)', 'Circuit de la Dépense Municipale', 'Rôle & Obligations Légales du Comptable']
+  },
+  {
+    id: 'track-28',
+    title_ar: 'محاسب رئيسي للإدارة الإقليمية - تكوين تحضيري أثناء التربص',
+    title_fr: 'Comptable Principal de l\'Administration Régionale - Formation Préparatoire Pendant Stage',
+    sector_ar: 'الأسلاك الإقليمية',
+    sector_fr: 'Administration Régionale',
+    category: 'regional',
+    modules_ar: ['التنظيم المالي للجماعات المحلية وعلاقتها بالخزينة', 'مسار الصفقات العمومية التمهيدي للمجالس', 'التدقيق المالي الأولي للدفاتر البلدية', 'الواجبات القانونية والأخلاقية للمتربص المحاسب'],
+    modules_fr: ['Organisation Financière des Collectivités & Trésor', 'Circuit Initial des Marchés Publics Communaux', 'Audit Budgétaire Préliminaire des Livres APC', 'Déontologie Légale du Comptable Stagiaire']
   }
 ];
 
