@@ -117,7 +117,7 @@ function AuthPageContent() {
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#fbf8f3]">
       
       {/* LEFT SPLIT PANEL: Brand & Abstract Geometric CSS Pattern */}
-      <div className="lg:col-span-5 bg-[#F3E4C9] p-10 flex flex-col justify-between relative overflow-hidden min-h-[300px] lg:min-h-screen">
+      <div className="lg:col-span-5 bg-[#F3E4C9] p-6 sm:p-10 flex flex-col justify-between relative overflow-hidden min-h-[190px] lg:min-h-screen">
         
         {/* CSS-based dynamic geometric grid overlay in #5C7449 */}
         <div className="absolute inset-0 opacity-15 pointer-events-none z-0">
@@ -148,8 +148,8 @@ function AuthPageContent() {
         </div>
 
         {/* Large graphic statement */}
-        <div className="my-auto z-10 relative py-12 max-w-sm">
-          <h2 className="text-3xl lg:text-4xl font-black text-[#3E5C46] leading-tight mb-4">
+        <div className="my-auto z-10 relative py-6 sm:py-12 max-w-sm">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#3E5C46] leading-tight mb-3 sm:mb-4">
             {t('authSlogan')}
           </h2>
           <p className="text-sm text-[#5C7449] leading-relaxed">
@@ -169,8 +169,8 @@ function AuthPageContent() {
       </div>
 
       {/* RIGHT PANEL: Beige/White form container */}
-      <div className="lg:col-span-7 flex flex-col justify-center items-center p-6 sm:p-12 md:p-20 relative">
-        <div className="w-full max-w-md flex flex-col gap-8">
+      <div className="lg:col-span-7 flex flex-col justify-center items-center p-5 sm:p-12 md:p-20 relative">
+        <div className="w-full max-w-md flex flex-col gap-6 sm:gap-8">
           
           {/* Navigation Tabs (flat, underline style only) */}
           <div className="flex border-b border-[#F3E4C9] pb-0.5">
@@ -180,7 +180,7 @@ function AuthPageContent() {
                 setErrorMsg('');
                 setSuccessMsg('');
               }}
-              className={`flex-1 text-center py-3 text-sm font-bold tab-underline ${
+              className={`flex-1 text-center py-2.5 sm:py-3 text-sm font-bold tab-underline ${
                 activeTab === 'login' ? 'active' : 'text-[#5C7449]'
               }`}
             >
@@ -192,7 +192,7 @@ function AuthPageContent() {
                 setErrorMsg('');
                 setSuccessMsg('');
               }}
-              className={`flex-1 text-center py-3 text-sm font-bold tab-underline ${
+              className={`flex-1 text-center py-2.5 sm:py-3 text-sm font-bold tab-underline ${
                 activeTab === 'register' ? 'active' : 'text-[#5C7449]'
               }`}
             >
@@ -216,9 +216,9 @@ function AuthPageContent() {
 
           {/* 1. LOGIN TAB VIEW */}
           {activeTab === 'login' && (
-            <form onSubmit={handleLoginSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleLoginSubmit} className="flex flex-col gap-5 sm:gap-6">
               <div>
-                <h3 className="text-2xl font-black text-[#3E5C46] mb-1">
+                <h3 className="text-xl sm:text-2xl font-black text-[#3E5C46] mb-1">
                   {language === 'ar' ? 'مرحبًا بك مجددًا' : 'Ravi de vous revoir'}
                 </h3>
                 <p className="text-xs text-[#5C7449]">
@@ -269,9 +269,9 @@ function AuthPageContent() {
 
           {/* 2. REGISTER TAB VIEW */}
           {activeTab === 'register' && (
-            <form onSubmit={handleRegisterSubmit} className="flex flex-col gap-5">
+            <form onSubmit={handleRegisterSubmit} className="flex flex-col gap-4 sm:gap-5">
               <div>
-                <h3 className="text-2xl font-black text-[#3E5C46] mb-1">
+                <h3 className="text-xl sm:text-2xl font-black text-[#3E5C46] mb-1">
                   {t('tabRegister')}
                 </h3>
                 <p className="text-xs text-[#5C7449]">

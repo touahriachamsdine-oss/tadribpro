@@ -446,7 +446,7 @@ export default function TraineePortalPage() {
         <nav className="flex flex-row lg:flex-col lg:py-6 overflow-x-auto lg:overflow-x-visible w-full justify-around lg:justify-start lg:gap-2 flex-grow lg:flex-grow-0">
           <button 
             onClick={() => setActiveTab('dashboard')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'dashboard' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
             }`}
           >
@@ -461,7 +461,7 @@ export default function TraineePortalPage() {
 
           <button 
             onClick={() => setActiveTab('course')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'course' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
             }`}
           >
@@ -474,7 +474,7 @@ export default function TraineePortalPage() {
 
           <button 
             onClick={() => setActiveTab('lessons')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'lessons' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
             }`}
           >
@@ -489,7 +489,7 @@ export default function TraineePortalPage() {
 
           <button 
             onClick={() => setActiveTab('exams')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'exams' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
             }`}
           >
@@ -504,7 +504,7 @@ export default function TraineePortalPage() {
 
           <button 
             onClick={() => setActiveTab('certificate')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'certificate' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
             }`}
           >
@@ -522,7 +522,7 @@ export default function TraineePortalPage() {
               setIsDrawerOpen(true);
               setDrawerTab('faq');
             }}
-            className="flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15"
+            className="flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15"
           >
             <HelpCircle className="w-5 h-5 text-[#CCD67F]/80" />
             <span className="text-[10px] sm:text-xs lg:text-sm">
@@ -550,10 +550,10 @@ export default function TraineePortalPage() {
       </aside>
 
       {/* 2. MAIN WORKSPACE */}
-      <main className="flex-grow p-6 sm:p-8 lg:p-12 overflow-y-auto mb-16 lg:mb-0">
+      <main className="flex-grow p-4 sm:p-8 lg:p-12 overflow-y-auto mb-16 lg:mb-0">
         
         {/* Mobile Header */}
-        <header className="lg:hidden flex items-center justify-between pb-6 border-b border-[#F3E4C9] mb-6">
+        <header className="lg:hidden flex items-center justify-between pb-4 border-b border-[#F3E4C9] mb-4">
           <span className="font-extrabold text-sm text-[#3E5C46]">
             {language === 'ar' ? 'التكوين الترقوي المشترك' : 'Formation Continue'}
           </span>
@@ -656,16 +656,16 @@ export default function TraineePortalPage() {
                 )}
 
             {/* Trainee Welcome Card (Flat, no shadows) */}
-            <div className="bg-[#3E5C46] text-[#F3E4C9] p-8 rounded-3xl mb-8 relative overflow-hidden">
+            <div className="bg-[#3E5C46] text-[#F3E4C9] p-6 sm:p-8 rounded-3xl mb-6 sm:mb-8 relative overflow-hidden">
               {/* Background abstract decoration shape */}
               <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[#5C7449]/20 skew-x-12 transform origin-top-right"></div>
               
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
                 <div>
                   <span className="text-xs font-black uppercase text-[#CCD67F] tracking-widest block mb-2">
                     {currentTrainee.companyName}
                   </span>
-                  <h2 className="text-3xl font-black text-white mb-2">
+                  <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">
                     {language === 'ar' ? `مرحباً، ${currentTrainee.name}` : `Bienvenue, ${currentTrainee.name}`}
                   </h2>
                   <p className="text-sm text-[#F3E4C9]/90 font-medium max-w-xl">
@@ -693,16 +693,16 @@ export default function TraineePortalPage() {
             </div>
 
             {/* Quick Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
               
               {/* Trainee progress tile */}
-              <div className="bg-[#F3E4C9] p-6 rounded-2xl flex flex-col justify-between">
+              <div className="bg-[#F3E4C9] p-5 sm:p-6 rounded-2xl flex flex-col justify-between">
                 <span className="text-[10px] font-bold text-[#5C7449] uppercase tracking-wider">
                   {t('progress')}
                 </span>
                 <div className="mt-4">
                   <div className="flex justify-between items-baseline mb-2">
-                    <span className="text-3xl font-black text-[#3E5C46]">{currentTrainee.progress}%</span>
+                    <span className="text-2xl sm:text-3xl font-black text-[#3E5C46]">{currentTrainee.progress}%</span>
                     <span className="text-xs text-[#5C7449] font-bold">
                       {currentTrainee.completedModules.length} / {getTrackModules().length} {language === 'ar' ? 'مقاييس مكتملة' : 'modules'}
                     </span>
@@ -714,12 +714,12 @@ export default function TraineePortalPage() {
               </div>
 
               {/* Deadline tile */}
-              <div className="bg-[#F3E4C9] p-6 rounded-2xl flex flex-col justify-between">
+              <div className="bg-[#F3E4C9] p-5 sm:p-6 rounded-2xl flex flex-col justify-between">
                 <span className="text-[10px] font-bold text-[#5C7449] uppercase tracking-wider">
                   {t('deadline')}
                 </span>
                 <div className="mt-4">
-                  <span className="text-2xl font-extrabold text-[#3E5C46] flex items-center gap-2">
+                  <span className="text-xl sm:text-2xl font-extrabold text-[#3E5C46] flex items-center gap-2">
                     <Calendar className="w-6 h-6 text-[#5C7449]" />
                     {currentTrainee.deadline}
                   </span>
@@ -732,7 +732,7 @@ export default function TraineePortalPage() {
               </div>
 
               {/* Certification Eligibility tile */}
-              <div className="bg-[#F3E4C9] p-6 rounded-2xl flex flex-col justify-between">
+              <div className="bg-[#F3E4C9] p-5 sm:p-6 rounded-2xl flex flex-col justify-between">
                 <span className="text-[10px] font-bold text-[#5C7449] uppercase tracking-wider">
                   {language === 'ar' ? 'الأهلية للترقية المهنية' : 'Éligibilité à la Promotion'}
                 </span>
@@ -1010,7 +1010,7 @@ export default function TraineePortalPage() {
 
             {/* Eligibility card shown in Certificate tab when course not yet completed */}
             {currentTrainee.status !== 'completed' && (
-              <div className="p-10 sm:p-14 text-center bg-[#F3E4C9]/40 rounded-3xl border-2 border-dashed border-[#5C7449]/30 animate-fadeIn">
+              <div className="p-6 sm:p-14 text-center bg-[#F3E4C9]/40 rounded-3xl border-2 border-dashed border-[#5C7449]/30 animate-fadeIn">
                 <div className="bg-[#3E5C46] text-[#CCD67F] p-4 rounded-full inline-flex mb-5">
                   <Award className="w-8 h-8" />
                 </div>

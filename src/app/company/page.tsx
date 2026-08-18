@@ -671,7 +671,7 @@ export default function CompanyAdminPage() {
         <nav className="flex flex-row lg:flex-col lg:py-6 overflow-x-auto lg:overflow-x-visible w-full justify-around lg:justify-start lg:gap-2 flex-grow lg:flex-grow-0">
           <button 
             onClick={() => setActiveTab('dashboard')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'dashboard' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
             }`}
           >
@@ -684,7 +684,7 @@ export default function CompanyAdminPage() {
           
           <button 
             onClick={() => setActiveTab('users')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'users' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
             }`}
           >
@@ -697,7 +697,7 @@ export default function CompanyAdminPage() {
 
           <button 
             onClick={() => setActiveTab('ranks')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'ranks' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
             }`}
           >
@@ -710,7 +710,7 @@ export default function CompanyAdminPage() {
 
           <button 
             onClick={() => setActiveTab('lessons')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'lessons' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
             }`}
           >
@@ -723,7 +723,7 @@ export default function CompanyAdminPage() {
 
           <button 
             onClick={() => setActiveTab('messages')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'messages' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
             }`}
           >
@@ -736,7 +736,7 @@ export default function CompanyAdminPage() {
 
           <button 
             onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+            className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
               activeTab === 'settings' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
             }`}
           >
@@ -767,7 +767,7 @@ export default function CompanyAdminPage() {
       </aside>
 
       {/* 2. MAIN WORKSPACE */}
-      <main className="flex-grow p-6 sm:p-8 lg:p-12 overflow-y-auto mb-16 lg:mb-0">
+      <main className="flex-grow p-4 sm:p-8 lg:p-12 overflow-y-auto mb-16 lg:mb-0">
         
         {isSuperAdmin && (
           <div className="bg-[#CCD67F]/40 border border-[#3E5C46]/20 text-[#3E5C46] px-6 py-4 rounded-2xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm font-semibold">
@@ -789,7 +789,7 @@ export default function CompanyAdminPage() {
         )}
         
         {/* Mobile Header */}
-        <header className="lg:hidden flex items-center justify-between pb-6 border-b border-[#F3E4C9] mb-6">
+        <header className="lg:hidden flex items-center justify-between pb-4 border-b border-[#F3E4C9] mb-4">
           <span className="font-extrabold text-sm text-[#3E5C46]">
             {companyName || 'مؤسسة تكوين العملاء'}
           </span>

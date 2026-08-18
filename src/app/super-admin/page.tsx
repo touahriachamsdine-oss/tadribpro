@@ -466,7 +466,7 @@ const handleDeleteGlobalLesson = async (lessonId: string, title: string) => {
               <button
                 key={item.id}
                 onClick={() => setActiveMenu(item.id as 'dashboard' | 'companies' | 'tracks' | 'lessons' | 'users' | 'settings')}
-                className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+                className={`flex items-center gap-3 py-3 px-4 sm:py-4 sm:px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
                   isActive 
                     ? 'text-white bg-[#5C7449]/30' 
                     : 'text-[#F3E4C9]/80 hover:text-white hover:bg-[#5C7449]/10'
@@ -507,10 +507,10 @@ const handleDeleteGlobalLesson = async (lessonId: string, title: string) => {
       </aside>
 
       {/* 2. MAIN WORK AREA */}
-      <main className="flex-grow p-6 sm:p-8 lg:p-12 overflow-y-auto mb-16 lg:mb-0">
+      <main className="flex-grow p-4 sm:p-8 lg:p-12 overflow-y-auto mb-16 lg:mb-0">
         
         {/* Mobile Top Header (Mobile only) */}
-        <header className="lg:hidden flex items-center justify-between pb-6 border-b border-[#F3E4C9] mb-6">
+        <header className="lg:hidden flex items-center justify-between pb-4 border-b border-[#F3E4C9] mb-4">
           <div className="flex items-center gap-2">
             <div className="bg-[#3E5C46] text-white p-2 rounded-full">
               <Landmark className="w-4 h-4" />
