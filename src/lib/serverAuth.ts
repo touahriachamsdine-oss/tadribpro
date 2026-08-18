@@ -61,11 +61,11 @@ export async function getSessionUser(token: string): Promise<SessionUser | null>
   }
 }
 
-export async function getUserByEmail(email: string, role: Role) {
+export async function getUserByEmail(email: string, role?: Role) {
   if (!sql) return null;
   try {
     const rows = await sql`
-      SELECT * FROM users WHERE LOWER(email) = ${email.toLowerCase()} AND role = ${role} LIMIT 1
+      SELECT * FROM users WHERE LOWER(email) = ${email.toLowerCase()}${role ? sql` AND role = ${role}` : sql``} LIMIT 1
     `;
     return rows.length ? rows[0] : null;
   } catch (err) {

@@ -17,11 +17,11 @@ export async function getSession(): Promise<SessionUser | null> {
   }
 }
 
-export async function login(email: string, password: string, role: SessionUser['role']) {
+export async function login(email: string, password: string) {
   const res = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, role }),
+    body: JSON.stringify({ email, password }),
   });
   const body = await res.json().catch(() => ({}));
   return { ok: res.ok, status: res.status, body };

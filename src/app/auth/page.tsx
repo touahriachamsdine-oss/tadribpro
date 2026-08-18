@@ -20,7 +20,6 @@ function AuthPageContent() {
   // Form Fields - Login
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [loginRole, setLoginRole] = useState<'super-admin' | 'company' | 'trainee'>('company');
 
   // Form Fields - Register
   const [regCompanyName, setRegCompanyName] = useState('');
@@ -45,7 +44,7 @@ function AuthPageContent() {
 
     setLoading(true);
     try {
-      const { ok, status, body } = await login(loginEmail, loginPassword, loginRole);
+      const { ok, status, body } = await login(loginEmail, loginPassword);
       if (!ok) {
         const msg =
           status === 401
@@ -255,53 +254,6 @@ function AuthPageContent() {
                   className="underline-input"
                   required
                 />
-              </div>
-
-              {/* Account Role Selector (Interactive preview selection) */}
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-[#3E5C46] uppercase tracking-wider">
-                  {t('inputRole')}
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setLoginRole('super-admin')}
-                    className={`py-2 px-3 text-xs font-bold rounded-lg border text-center transition-all ${
-                      loginRole === 'super-admin'
-                        ? 'bg-[#3E5C46] text-[#F3E4C9] border-[#3E5C46]'
-                        : 'border-[#F3E4C9] text-[#5C7449] hover:bg-[#F3E4C9]/40'
-                    }`}
-                  >
-                    {language === 'ar' ? 'مدير المنصة' : 'Super Admin'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLoginRole('company')}
-                    className={`py-2 px-3 text-xs font-bold rounded-lg border text-center transition-all ${
-                      loginRole === 'company'
-                        ? 'bg-[#3E5C46] text-[#F3E4C9] border-[#3E5C46]'
-                        : 'border-[#F3E4C9] text-[#5C7449] hover:bg-[#F3E4C9]/40'
-                    }`}
-                  >
-                    {language === 'ar' ? 'مشرف المؤسسة' : 'Etablissement'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLoginRole('trainee')}
-                    className={`py-2 px-3 text-xs font-bold rounded-lg border text-center transition-all ${
-                      loginRole === 'trainee'
-                        ? 'bg-[#3E5C46] text-[#F3E4C9] border-[#3E5C46]'
-                        : 'border-[#F3E4C9] text-[#5C7449] hover:bg-[#F3E4C9]/40'
-                    }`}
-                  >
-                    {language === 'ar' ? 'موظف متكون' : 'Trainee'}
-                  </button>
-                </div>
-                <span className="text-[10px] text-[#5C7449] block mt-1 leading-normal">
-                  💡 {language === 'ar' 
-                    ? 'التحويل بين الأدوار مفعل لتسهيل استعراض لوحات التحكم في النسخة التجريبية.'
-                    : 'Le commutateur de rôle est activé pour simplifier l’examen de l’interface.'}
-                </span>
               </div>
 
               {/* Sage Green Pill Button with dynamic color-slide hover */}

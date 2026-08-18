@@ -14,14 +14,17 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => null);
     const { email, password, role } = body ?? {};
 
-    if (!email || !password || !(['super-admin', 'company', 'trainee'] as Role[]).includes(role)) {
-      return NextResponse.json({ error: 'INVALID_INPUT', message: 'Missing email, password or role.' }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json({ error: 'INVALID_INPUT', message: 'Missing email or password.' }, { status: 400 });
+    }
+    if (role && !(['super-admin', 'company', 'trainee'] as Role[]).includes(role)) {
+      return NextResponse.json({ error: 'INVALID_INPUT', message: 'Invalid role.' }, { status: 400 });
     }
     if (!dbConfigured()) {
       return NextResponse.json({ error: 'NO_DATABASE_URL', message: 'Database is not configured.' }, { status: 503 });
     }
 
-    const user = await getUserByEmail(email, role as Role);
+    const user = await getUserByEmail(email, role as Role | undefined);
     if (!user || !verifyPassword(password, user.password_hash)) {
       return NextResponse.json({ error: 'INVALID_CREDENTIALS', message: 'Email or password incorrect.' }, { status: 401 });
     }
