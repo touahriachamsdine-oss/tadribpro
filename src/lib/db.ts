@@ -85,6 +85,7 @@ export interface Lesson {
   trackIds?: string[];
   fileName: string;
   fileContent: string;
+  fileData?: string;
   createdAt: string;
 }
 
@@ -1577,7 +1578,8 @@ export const db = {
     moduleTitle: string,
     fileName: string,
     fileContent: string,
-    trackIds: string[] = []
+    trackIds: string[] = [],
+    fileData: string = ''
   ): Promise<Lesson> {
     const newLesson: Lesson = {
       id: 'les-' + Math.random().toString(36).substr(2, 9),
@@ -1587,14 +1589,15 @@ export const db = {
       trackIds,
       fileName,
       fileContent,
+      fileData,
       createdAt: new Date().toISOString()
     };
 
     if (isServer && isLiveNeon && sql) {
       try {
         const [row] = await sql`
-          INSERT INTO lessons (id, company_id, title, module_title, track_ids, file_name, file_content, created_at)
-          VALUES (${newLesson.id}, ${companyId}, ${title}, ${moduleTitle}, ${JSON.stringify(trackIds)}, ${fileName}, ${fileContent}, NOW())
+          INSERT INTO lessons (id, company_id, title, module_title, track_ids, file_name, file_content, file_data, created_at)
+          VALUES (${newLesson.id}, ${companyId}, ${title}, ${moduleTitle}, ${JSON.stringify(trackIds)}, ${fileName}, ${fileContent}, ${fileData}, NOW())
           RETURNING *
         `;
         return {
@@ -1605,6 +1608,7 @@ export const db = {
           trackIds: row.track_ids ? JSON.parse(row.track_ids) : [],
           fileName: row.file_name,
           fileContent: row.file_content,
+          fileData: row.file_data || '',
           createdAt: row.created_at
         };
       } catch (err) {

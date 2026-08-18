@@ -29,6 +29,7 @@ import {
   ArrowDown,
   Upload,
   FileText,
+  Download,
   Edit3,
   ChevronDown,
   ChevronUp,
@@ -520,7 +521,7 @@ export default function CompanyAdminPage() {
       reader.onload = (event) => {
         setNewLessonFileContent(event.target?.result as string || `Contenu de ${file.name}`);
       };
-      reader.readAsText(file);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -540,8 +541,9 @@ export default function CompanyAdminPage() {
         newLessonTitle,
         newLessonModule || 'General',
         newLessonFileName,
-        newLessonFileContent || 'Contenu PDF Simulé - TadribPro Multi-Tenant Document Content.',
-        newLessonTrackIds
+        '',
+        newLessonTrackIds,
+        newLessonFileContent || ''
       );
 
       setSuccess(language === 'ar' ? 'تم رفع درس PDF بنجاح وإلحاقه بالمقياس المعين للموظفين!' : 'Le cours PDF a été téléversé avec succès !');
@@ -1952,9 +1954,16 @@ export default function CompanyAdminPage() {
                               </div>
                             </div>
                           </div>
-                          <span className="text-[9px] text-[#5C7449] font-bold shrink-0">
-                            {language === 'ar' ? 'مشترك' : 'Commun'}
-                          </span>
+                          <a
+                            href={`/api/lesson/file?id=${lesson.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-[10px] font-bold text-[#3E5C46] bg-[#CCD67F] hover:bg-[#3E5C46] hover:text-white transition-colors py-1.5 px-3 rounded-lg shrink-0"
+                            title={language === 'ar' ? 'فتح الملف PDF' : 'Ouvrir le PDF'}
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            {language === 'ar' ? 'فتح PDF' : 'PDF'}
+                          </a>
                         </div>
                       ))}
                     </>
@@ -1995,13 +2004,24 @@ export default function CompanyAdminPage() {
                             </div>
                           </div>
 
-                          <button
-                            onClick={() => handleDeleteLesson(lesson.id, lesson.title)}
-                            className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors"
-                            title={language === 'ar' ? 'حذف هذا الدرس' : 'Supprimer'}
-                          >
-                            <Trash2 className="w-4.5 h-4.5" />
-                          </button>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <a
+                              href={`/api/lesson/file?id=${lesson.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 text-[#3E5C46] hover:bg-[#CCD67F]/40 rounded-xl transition-colors"
+                              title={language === 'ar' ? 'فتح الملف PDF' : 'Ouvrir le PDF'}
+                            >
+                              <Download className="w-4.5 h-4.5" />
+                            </a>
+                            <button
+                              onClick={() => handleDeleteLesson(lesson.id, lesson.title)}
+                              className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors"
+                              title={language === 'ar' ? 'حذف هذا الدرس' : 'Supprimer'}
+                            >
+                              <Trash2 className="w-4.5 h-4.5" />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </>

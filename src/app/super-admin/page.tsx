@@ -25,7 +25,8 @@ import {
   ExternalLink,
   BookOpen,
   Upload,
-  FileText
+  FileText,
+  Download
 } from 'lucide-react';
 
 export default function SuperAdminPage() {
@@ -215,7 +216,7 @@ export default function SuperAdminPage() {
       reader.onload = (event) => {
         setNewLessonFileContent(event.target?.result as string || `Contenu de ${file.name}`);
       };
-      reader.readAsText(file);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -235,8 +236,9 @@ export default function SuperAdminPage() {
         newLessonTitle,
         newLessonModule || 'General',
         newLessonFileName,
-        newLessonFileContent || 'Contenu PDF Simulé - Document Central.',
-        newLessonTrackIds
+        '',
+        newLessonTrackIds,
+        newLessonFileContent || ''
       );
 
       setSuccess(language === 'ar' ? 'تم رفع درس PDF العام بنجاح!' : 'Le cours PDF global a été téléversé avec succès !');
@@ -253,21 +255,21 @@ export default function SuperAdminPage() {
     }
   };
 
-  const handleDeleteGlobalLesson = async (lessonId: string, title: string) => {
+const handleDeleteGlobalLesson = async (lessonId: string, title: string) => {
     const consent = window.confirm(
       language === 'ar'
         ? `هل أنت متأكد من حذف الدرس العام "${title}"؟`
-        : `Êtes-vous sûr de vouloir supprimer le cours général "${title}" ?`
+        : `Êtes-vous sûr de vouloir supprimer le cours "${title}" ?`
     );
     if (!consent) return;
 
     try {
       await db.deleteLesson(lessonId);
-      setSuccess(language === 'ar' ? 'تم حذف الدرس العام بنجاح!' : 'Cours global supprimé avec succès !');
+      setSuccess(language === 'ar' ? 'تم حذف الدرس العام بنجاح!' : 'Cours supprimé avec succès !');
       loadData();
       setTimeout(() => setSuccess(''), 3000);
     } catch {
-      setError(language === 'ar' ? 'فشل التحديث.' : 'Échec de suppression.');
+      setError(language === 'ar' ? 'فشل تحديث قاعدة البيانات.' : 'Échec de suppression.');
     }
   };
 
@@ -1211,13 +1213,24 @@ export default function SuperAdminPage() {
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => handleDeleteGlobalLesson(lesson.id, lesson.title)}
-                        className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors"
-                        title={language === 'ar' ? 'حذف الدرس' : 'Supprimer'}
-                      >
-                        <Trash2 className="w-4.5 h-4.5" />
-                      </button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <a
+                          href={`/api/lesson/file?id=${lesson.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 text-[#3E5C46] hover:bg-[#CCD67F]/40 rounded-xl transition-colors"
+                          title={language === 'ar' ? 'فتح الملف PDF' : 'Ouvrir le PDF'}
+                        >
+                          <Download className="w-4.5 h-4.5" />
+                        </a>
+                        <button
+                          onClick={() => handleDeleteGlobalLesson(lesson.id, lesson.title)}
+                          className="p-2 text-red-700 hover:bg-red-50 rounded-xl transition-colors"
+                          title={language === 'ar' ? 'حذف الدرس' : 'Supprimer'}
+                        >
+                          <Trash2 className="w-4.5 h-4.5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

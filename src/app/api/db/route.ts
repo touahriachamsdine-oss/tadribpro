@@ -532,10 +532,10 @@ export async function POST(request: Request) {
       }
 
       case 'addLesson': {
-        const { id, companyId, title, moduleTitle, trackIds, fileName, fileContent } = payload;
+        const { id, companyId, title, moduleTitle, trackIds, fileName, fileContent, fileData } = payload;
         const [row] = await sql`
-          INSERT INTO lessons (id, company_id, title, module_title, track_ids, file_name, file_content, created_at)
-          VALUES (${id}, ${companyId}, ${title}, ${moduleTitle}, ${JSON.stringify(trackIds || [])}, ${fileName}, ${fileContent}, NOW())
+          INSERT INTO lessons (id, company_id, title, module_title, track_ids, file_name, file_content, file_data, created_at)
+          VALUES (${id}, ${companyId}, ${title}, ${moduleTitle}, ${JSON.stringify(trackIds || [])}, ${fileName}, ${fileContent}, ${fileData || ''}, NOW())
           RETURNING *
         `;
         return NextResponse.json({
@@ -548,6 +548,7 @@ export async function POST(request: Request) {
             trackIds: row.track_ids ? JSON.parse(row.track_ids) : [],
             fileName: row.file_name,
             fileContent: row.file_content,
+            fileData: row.file_data || '',
             createdAt: row.created_at
           }
         });

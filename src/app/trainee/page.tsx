@@ -916,12 +916,13 @@ export default function TraineePortalPage() {
                               <p className="text-[10px] font-semibold text-[#5C7449] mt-0.5">{lesson.moduleTitle}</p>
                             </div>
                           </div>
-                          <a 
-                            href="#" 
-                            onClick={(e) => { e.preventDefault(); alert(lesson.fileContent); }}
+                          <a
+                            href={`/api/lesson/file?id=${lesson.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-white bg-[#3E5C46] hover:bg-[#5C7449] transition-colors py-1.5 px-3 rounded-lg w-full justify-center"
                           >
-                            <span>{language === 'ar' ? 'فتح الملف' : 'Ouvrir'}</span>
+                            <span>{language === 'ar' ? 'فتح الملف PDF' : 'Ouvrir le PDF'}</span>
                             <span className="font-mono text-[9px] truncate max-w-[100px]">{lesson.fileName}</span>
                           </a>
                         </div>
