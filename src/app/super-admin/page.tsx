@@ -369,7 +369,7 @@ export default function SuperAdminPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `TakwinPro_Etablissements_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `TadribPro_Etablissements_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -397,7 +397,7 @@ export default function SuperAdminPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `TakwinPro_Trainees_Global_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `TadribPro_Trainees_Global_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -446,7 +446,7 @@ export default function SuperAdminPage() {
           </div>
           <div>
             <span className="font-extrabold text-lg block text-white">
-              {language === 'ar' ? t('brandName') : 'TakwinPro'}
+              {language === 'ar' ? t('brandName') : 'TadribPro'}
             </span>
             <span className="text-[10px] text-[#F3E4C9]/70 block font-semibold uppercase tracking-wider">
               {language === 'ar' ? 'فضاء مدير المنصة' : 'Super Admin Area'}
@@ -514,7 +514,7 @@ export default function SuperAdminPage() {
               <Landmark className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-base text-[#3E5C46]">
-              {language === 'ar' ? t('brandName') : 'TakwinPro'}
+              {language === 'ar' ? t('brandName') : 'TadribPro'}
             </span>
           </div>
 

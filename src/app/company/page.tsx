@@ -321,7 +321,7 @@ export default function CompanyAdminPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `TakwinPro_Trainees_${companyId}_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `TadribPro_Trainees_${companyId}_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -540,7 +540,7 @@ export default function CompanyAdminPage() {
         newLessonTitle,
         newLessonModule || 'General',
         newLessonFileName,
-        newLessonFileContent || 'Contenu PDF Simulé - TakwinPro Multi-Tenant Document Content.',
+        newLessonFileContent || 'Contenu PDF Simulé - TadribPro Multi-Tenant Document Content.',
         newLessonTrackIds
       );
 

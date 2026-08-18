@@ -1,4 +1,7 @@
 import { neon } from '@neondatabase/serverless';
+import { KATIB_LESSONS } from './katibLessons';
+import { MUTASARIF_LESSONS } from './mutasarifLessons';
+import { INFO_ASSISTANT_LESSONS } from './infoAssistantLessons';
 
 // Types
 export interface TrainingTrack {
@@ -189,8 +192,8 @@ export const OFFICIAL_TRACKS: TrainingTrack[] = [
   },
   {
     id: 'track-15',
-    title_ar: 'كاتب مدينة رئيسي - تكوين تكميلي ما قبل الترقية',
-    title_fr: 'Secrétaire de Ville Principal - Formation Complémentaire Pré-Promotion',
+    title_ar: 'كاتب مديرية رئيسي - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Clerc de Direction Principal - Formation Complémentaire Pré-Promotion',
     sector_ar: 'الأسلاك المشتركة',
     sector_fr: 'Corps Communs',
     category: 'joint',
@@ -199,8 +202,8 @@ export const OFFICIAL_TRACKS: TrainingTrack[] = [
   },
   {
     id: 'track-16',
-    title_ar: 'كاتب مدينة - تكوين تكميلي ما قبل الترقية',
-    title_fr: 'Secrétaire de Ville - Formation Complémentaire Pré-Promotion',
+    title_ar: 'كاتب مديرية - تكوين تكميلي ما قبل الترقية',
+    title_fr: 'Clerc de Direction - Formation Complémentaire Pré-Promotion',
     sector_ar: 'الأسلاك المشتركة',
     sector_fr: 'Corps Communs',
     category: 'joint',
@@ -395,7 +398,7 @@ const INITIAL_COMPANIES: Company[] = [
     id: 'comp-1',
     name: 'وزارة التعليم العالي والبحث العلمي',
     sector: 'التعليم العالي / Recherche',
-    email: 'mesrs@takwinpro.dz',
+    email: 'mesrs@tadribpro.dz',
     traineeCount: 2,
     createdAt: '2026-01-10T10:00:00Z'
   },
@@ -403,7 +406,7 @@ const INITIAL_COMPANIES: Company[] = [
     id: 'comp-2',
     name: 'بلدية الجزائر الوسطى (APC)',
     sector: 'الإدارة المحلية / Wilaya',
-    email: 'alger-centre@takwinpro.dz',
+    email: 'alger-centre@tadribpro.dz',
     traineeCount: 3,
     createdAt: '2026-02-15T11:30:00Z'
   },
@@ -411,7 +414,7 @@ const INITIAL_COMPANIES: Company[] = [
     id: 'comp-3',
     name: 'الصندوق الوطني للتقاعد (CNR)',
     sector: 'الحماية الاجتماعية / Securite Sociale',
-    email: 'cnr@takwinpro.dz',
+    email: 'cnr@tadribpro.dz',
     traineeCount: 1,
     createdAt: '2026-03-01T09:00:00Z'
   }
@@ -655,29 +658,38 @@ const INITIAL_LESSONS: Lesson[] = [
 3. نموذج رسالة إدارية رسمية بين المصالح:
 "يشرفني أن أنهي إلى علمكم أنه قد تم تحديد تاريخ انعقاد الدورة العادية للمجلس الشعبي البلدي يوم الإثنين القادم بمقر البلدية. وبناءً عليه، أرجو منكم اتخاذ كافة التدابير لتسهيل حضور ممثلي مصالحكم..."`,
     createdAt: new Date(Date.now() - 1 * 24 * 3600 * 1000).toISOString()
-  }
+  },
+  ...KATIB_LESSONS,
+  ...MUTASARIF_LESSONS,
+  ...INFO_ASSISTANT_LESSONS
 ];
 
 // Initialize LocalStorage Database if not exists
 const initLocalStore = () => {
   if (typeof window === 'undefined') return;
-  if (!localStorage.getItem('takwin_companies')) {
-    localStorage.setItem('takwin_companies', JSON.stringify(INITIAL_COMPANIES));
+  if (!localStorage.getItem('tadrib_companies')) {
+    localStorage.setItem('tadrib_companies', JSON.stringify(INITIAL_COMPANIES));
   }
-  if (!localStorage.getItem('takwin_trainees')) {
-    localStorage.setItem('takwin_trainees', JSON.stringify(INITIAL_TRAINEES));
+  if (!localStorage.getItem('tadrib_trainees')) {
+    localStorage.setItem('tadrib_trainees', JSON.stringify(INITIAL_TRAINEES));
   }
-  if (!localStorage.getItem('takwin_tickets')) {
-    localStorage.setItem('takwin_tickets', JSON.stringify(INITIAL_TICKETS));
+  if (!localStorage.getItem('tadrib_tickets')) {
+    localStorage.setItem('tadrib_tickets', JSON.stringify(INITIAL_TICKETS));
   }
-  if (!localStorage.getItem('takwin_evaluations')) {
-    localStorage.setItem('takwin_evaluations', JSON.stringify(INITIAL_EVALUATIONS));
+  if (!localStorage.getItem('tadrib_evaluations')) {
+    localStorage.setItem('tadrib_evaluations', JSON.stringify(INITIAL_EVALUATIONS));
   }
-  if (!localStorage.getItem('takwin_certificates')) {
-    localStorage.setItem('takwin_certificates', JSON.stringify(INITIAL_CERTIFICATES));
+  if (!localStorage.getItem('tadrib_certificates')) {
+    localStorage.setItem('tadrib_certificates', JSON.stringify(INITIAL_CERTIFICATES));
   }
-  if (!localStorage.getItem('takwin_lessons')) {
-    localStorage.setItem('takwin_lessons', JSON.stringify(INITIAL_LESSONS));
+  if (!localStorage.getItem('tadrib_lessons')) {
+    localStorage.setItem('tadrib_lessons', JSON.stringify(INITIAL_LESSONS));
+  }
+  if (!localStorage.getItem('tadrib_company_tracks_global')) {
+    localStorage.setItem(
+      'tadrib_company_tracks_global',
+      JSON.stringify(OFFICIAL_TRACKS.filter(t => t.id === 'track-15' || t.id === 'track-16'))
+    );
   }
 };
 
@@ -737,6 +749,7 @@ export const db = {
             FROM trainees
             GROUP BY company_id
           ) t ON c.id = t.company_id
+          WHERE c.id != 'global'
           ORDER BY c.name ASC
         `;
         return rows.map(r => ({
@@ -759,9 +772,9 @@ export const db = {
 
     // Offline Browser fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_companies') || '[]');
-    const trainees: Trainee[] = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
-    return list.map((c: Company) => ({
+    const list: Company[] = JSON.parse(localStorage.getItem('tadrib_companies') || '[]');
+    const trainees: Trainee[] = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
+    return list.filter(c => c.id !== 'global').map((c: Company) => ({
       ...c,
       traineeCount: trainees.filter(t => t.companyId === c.id).length
     }));
@@ -804,9 +817,9 @@ export const db = {
 
     // Offline Browser fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_companies') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_companies') || '[]');
     list.push(newCompany);
-    localStorage.setItem('takwin_companies', JSON.stringify(list));
+    localStorage.setItem('tadrib_companies', JSON.stringify(list));
     return newCompany;
   },
 
@@ -827,13 +840,13 @@ export const db = {
 
     // Offline Browser fallback
     initLocalStore();
-    let list = JSON.parse(localStorage.getItem('takwin_companies') || '[]');
+    let list = JSON.parse(localStorage.getItem('tadrib_companies') || '[]');
     list = list.filter((c: Company) => c.id !== id);
-    localStorage.setItem('takwin_companies', JSON.stringify(list));
+    localStorage.setItem('tadrib_companies', JSON.stringify(list));
 
-    let trainees = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+    let trainees = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
     trainees = trainees.filter((t: Trainee) => t.companyId !== id);
-    localStorage.setItem('takwin_trainees', JSON.stringify(trainees));
+    localStorage.setItem('tadrib_trainees', JSON.stringify(trainees));
   },
 
   // --- TRAINEES ---
@@ -872,7 +885,7 @@ export const db = {
 
     // Offline Browser fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
     if (companyId) {
       return list.filter((t: Trainee) => t.companyId === companyId);
     }
@@ -893,7 +906,7 @@ export const db = {
     let companyName = 'APC d\'Alger Centre';
     if (!isServer) {
       initLocalStore();
-      const companies = JSON.parse(localStorage.getItem('takwin_companies') || '[]');
+      const companies = JSON.parse(localStorage.getItem('tadrib_companies') || '[]');
       const targetComp = companies.find((c: Company) => c.id === companyId);
       companyName = targetComp ? targetComp.name : companyName;
     }
@@ -945,9 +958,9 @@ export const db = {
     }
 
     // Offline Browser fallback
-    const list = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
     list.push(newTrainee);
-    localStorage.setItem('takwin_trainees', JSON.stringify(list));
+    localStorage.setItem('tadrib_trainees', JSON.stringify(list));
     return newTrainee;
   },
 
@@ -978,7 +991,7 @@ export const db = {
       }
     } else if (!isServer) {
       initLocalStore();
-      const list: Trainee[] = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+      const list: Trainee[] = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
       const local = list.find(t => t.id === traineeId);
       if (local) currentTrainee = local;
     }
@@ -1036,7 +1049,7 @@ export const db = {
     }
 
     // Offline Browser fallback
-    const list: Trainee[] = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+    const list: Trainee[] = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
     const index = list.findIndex(t => t.id === traineeId);
     if (index !== -1) {
       const updated = {
@@ -1046,7 +1059,7 @@ export const db = {
         status: status as 'active' | 'completed'
       };
       list[index] = updated;
-      localStorage.setItem('takwin_trainees', JSON.stringify(list));
+      localStorage.setItem('tadrib_trainees', JSON.stringify(list));
       return updated;
     }
     throw new Error('Trainee not found');
@@ -1069,9 +1082,9 @@ export const db = {
 
     // Offline Browser fallback
     initLocalStore();
-    let list = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+    let list = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
     list = list.filter((t: Trainee) => t.id !== id);
-    localStorage.setItem('takwin_trainees', JSON.stringify(list));
+    localStorage.setItem('tadrib_trainees', JSON.stringify(list));
   },
 
   async updateTraineeTrack(traineeId: string, trackId: string, trackTitleAr: string, trackTitleFr: string): Promise<Trainee> {
@@ -1111,7 +1124,7 @@ export const db = {
 
     // Offline Browser fallback
     initLocalStore();
-    const list: Trainee[] = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+    const list: Trainee[] = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
     const index = list.findIndex(t => t.id === traineeId);
     if (index !== -1) {
       const updated = {
@@ -1124,7 +1137,7 @@ export const db = {
         status: 'active' as const
       };
       list[index] = updated;
-      localStorage.setItem('takwin_trainees', JSON.stringify(list));
+      localStorage.setItem('tadrib_trainees', JSON.stringify(list));
       return updated;
     }
     throw new Error('Trainee not found');
@@ -1162,7 +1175,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_tickets') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_tickets') || '[]');
     if (companyId) {
       return list.filter((t: SupportTicket) => t.companyId === companyId);
     }
@@ -1216,9 +1229,9 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_tickets') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_tickets') || '[]');
     list.push(newTicket);
-    localStorage.setItem('takwin_tickets', JSON.stringify(list));
+    localStorage.setItem('tadrib_tickets', JSON.stringify(list));
     return newTicket;
   },
 
@@ -1239,11 +1252,11 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list: SupportTicket[] = JSON.parse(localStorage.getItem('takwin_tickets') || '[]');
+    const list: SupportTicket[] = JSON.parse(localStorage.getItem('tadrib_tickets') || '[]');
     const idx = list.findIndex(t => t.id === ticketId);
     if (idx !== -1) {
       list[idx].status = status;
-      localStorage.setItem('takwin_tickets', JSON.stringify(list));
+      localStorage.setItem('tadrib_tickets', JSON.stringify(list));
     }
   },
 
@@ -1282,7 +1295,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_evaluations') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_evaluations') || '[]');
     if (companyId) {
       return list.filter((e: CourseEvaluation) => e.companyId === companyId);
     }
@@ -1346,9 +1359,9 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_evaluations') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_evaluations') || '[]');
     list.push(newEval);
-    localStorage.setItem('takwin_evaluations', JSON.stringify(list));
+    localStorage.setItem('tadrib_evaluations', JSON.stringify(list));
     return newEval;
   },
 
@@ -1382,7 +1395,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_certificates') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_certificates') || '[]');
     return list.find((c: Certificate) => c.id === id || c.hash === id) || null;
   },
 
@@ -1415,7 +1428,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_certificates') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_certificates') || '[]');
     return list.find((c: Certificate) => c.traineeId === traineeId) || null;
   },
 
@@ -1477,9 +1490,9 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_certificates') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_certificates') || '[]');
     list.push(newCert);
-    localStorage.setItem('takwin_certificates', JSON.stringify(list));
+    localStorage.setItem('tadrib_certificates', JSON.stringify(list));
     return newCert;
   },
 
@@ -1516,7 +1529,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_certificates') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_certificates') || '[]');
     const normalized = code.toUpperCase().trim();
     return list.find((c: Certificate) => c.id.toUpperCase() === normalized || c.hash === code.trim()) || null;
   },
@@ -1552,7 +1565,7 @@ export const db = {
 
     // Offline fallback
     if (typeof window !== 'undefined') {
-      const list = JSON.parse(localStorage.getItem('takwin_lessons') || '[]');
+      const list = JSON.parse(localStorage.getItem('tadrib_lessons') || '[]');
       return list.filter((l: Lesson) => l.companyId === companyId);
     }
     return [];
@@ -1606,9 +1619,9 @@ export const db = {
 
     // Offline fallback
     if (typeof window !== 'undefined') {
-      const list = JSON.parse(localStorage.getItem('takwin_lessons') || '[]');
+      const list = JSON.parse(localStorage.getItem('tadrib_lessons') || '[]');
       list.push(newLesson);
-      localStorage.setItem('takwin_lessons', JSON.stringify(list));
+      localStorage.setItem('tadrib_lessons', JSON.stringify(list));
       return newLesson;
     }
     return newLesson;
@@ -1631,9 +1644,9 @@ export const db = {
 
     // Offline fallback
     if (typeof window !== 'undefined') {
-      let list = JSON.parse(localStorage.getItem('takwin_lessons') || '[]');
+      let list = JSON.parse(localStorage.getItem('tadrib_lessons') || '[]');
       list = list.filter((l: Lesson) => l.id !== id);
-      localStorage.setItem('takwin_lessons', JSON.stringify(list));
+      localStorage.setItem('tadrib_lessons', JSON.stringify(list));
     }
   },
 
@@ -1665,7 +1678,7 @@ export const db = {
 
     // Offline fallback
     if (typeof window !== 'undefined') {
-      const list = JSON.parse(localStorage.getItem('takwin_company_messages') || '[]');
+      const list = JSON.parse(localStorage.getItem('tadrib_company_messages') || '[]');
       return list.filter((m: CompanyMessage) => m.companyId === companyId);
     }
     return [];
@@ -1705,9 +1718,9 @@ export const db = {
     }
 
     if (typeof window !== 'undefined') {
-      const list = JSON.parse(localStorage.getItem('takwin_company_messages') || '[]');
+      const list = JSON.parse(localStorage.getItem('tadrib_company_messages') || '[]');
       list.push(newMessage);
-      localStorage.setItem('takwin_company_messages', JSON.stringify(list));
+      localStorage.setItem('tadrib_company_messages', JSON.stringify(list));
       return newMessage;
     }
     return newMessage;
@@ -1729,9 +1742,9 @@ export const db = {
     }
 
     if (typeof window !== 'undefined') {
-      let list = JSON.parse(localStorage.getItem('takwin_company_messages') || '[]');
+      let list = JSON.parse(localStorage.getItem('tadrib_company_messages') || '[]');
       list = list.filter((m: CompanyMessage) => m.id !== id);
-      localStorage.setItem('takwin_company_messages', JSON.stringify(list));
+      localStorage.setItem('tadrib_company_messages', JSON.stringify(list));
     }
   },
 
@@ -1766,7 +1779,7 @@ export const db = {
 
     // Offline fallback
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('takwin_company_tracks_' + companyId);
+      const stored = localStorage.getItem('tadrib_company_tracks_' + companyId);
       if (stored) {
         return JSON.parse(stored);
       }
@@ -1803,7 +1816,7 @@ export const db = {
 
     // Offline fallback
     if (typeof window !== 'undefined') {
-      localStorage.setItem('takwin_company_tracks_' + companyId, JSON.stringify(tracks));
+      localStorage.setItem('tadrib_company_tracks_' + companyId, JSON.stringify(tracks));
     }
   },
 
@@ -1832,7 +1845,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_companies') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_companies') || '[]');
     return list.find((c: Company) => c.id === id) || null;
   },
 
@@ -1860,7 +1873,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_companies') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_companies') || '[]');
     return list.find((c: Company) => c.email.toLowerCase() === email.toLowerCase()) || null;
   },
 
@@ -1891,9 +1904,9 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_companies') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_companies') || '[]');
     const updated = list.map((c: Company) => c.id === id ? { ...c, name, sector, email: email || c.email } : c);
-    localStorage.setItem('takwin_companies', JSON.stringify(updated));
+    localStorage.setItem('tadrib_companies', JSON.stringify(updated));
   },
 
   async getTraineeByEmail(email: string): Promise<Trainee | null> {
@@ -1927,7 +1940,7 @@ export const db = {
 
     // Offline fallback
     initLocalStore();
-    const list = JSON.parse(localStorage.getItem('takwin_trainees') || '[]');
+    const list = JSON.parse(localStorage.getItem('tadrib_trainees') || '[]');
     return list.find((t: Trainee) => t.email.toLowerCase() === email.toLowerCase()) || null;
   }
 };

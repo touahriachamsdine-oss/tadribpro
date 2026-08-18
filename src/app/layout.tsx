@@ -3,7 +3,7 @@ import './globals.css';
 import { LanguageProvider } from '@/lib/LanguageContext';
 
 export const metadata: Metadata = {
-  title: 'منصة التكوين المتواصل | TakwinPro',
+  title: 'منصة التكوين المتواصل | TadribPro',
   description: 'المنصة الوطنية للتكوين المتواصل للموظفين والتربصات - الجزائر',
 };
 

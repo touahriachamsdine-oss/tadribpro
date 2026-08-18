@@ -192,6 +192,7 @@ export async function POST(request: Request) {
             FROM trainees
             GROUP BY company_id
           ) t ON c.id = t.company_id
+          WHERE c.id != 'global'
           ORDER BY c.name ASC
         `;
         // Normalize fields (e.g. created_at -> createdAt)

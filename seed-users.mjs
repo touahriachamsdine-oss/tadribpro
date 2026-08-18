@@ -9,7 +9,7 @@ const dbUrlMatch = envContent.match(/^DATABASE_URL=(.+)$/m);
 if (!dbUrlMatch) throw new Error('DATABASE_URL not found in .env');
 const sql = neon(dbUrlMatch[1].trim());
 
-const DEFAULT_PASSWORD = process.env.SEED_PASSWORD || 'Takwin@2026';
+const DEFAULT_PASSWORD = process.env.SEED_PASSWORD || 'Tadrib@2026';
 
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex');
@@ -32,14 +32,14 @@ async function run() {
   hash = hashPassword(DEFAULT_PASSWORD);
 
   // Super admins
-  await upsertUser('usr-admin', 'admin@takwinpro.dz', 'super-admin', 'Super Admin (TakwinPro)', null);
-  await upsertUser('usr-overseer', 'overseer@takwinpro.dz', 'super-admin', 'Overseer', null);
+  await upsertUser('usr-admin', 'admin@tadribpro.dz', 'super-admin', 'Super Admin (TadribPro)', null);
+  await upsertUser('usr-overseer', 'overseer@tadribpro.dz', 'super-admin', 'Overseer', null);
 
   // Company users
   const companies = await sql`SELECT id, name, email FROM companies`;
   console.log(`Seeding ${companies.length} company accounts...`);
   for (const c of companies) {
-    const email = (c.email && c.email.includes('@')) ? c.email : `${c.id}@takwinpro.dz`;
+    const email = (c.email && c.email.includes('@')) ? c.email : `${c.id}@tadribpro.dz`;
     await upsertUser('usr-' + c.id, email.toLowerCase(), 'company', c.name, c.id);
   }
 

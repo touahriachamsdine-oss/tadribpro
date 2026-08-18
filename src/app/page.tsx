@@ -18,7 +18,7 @@ export default function LandingPage() {
             </div>
             <div>
               <span className="font-bold text-xl block leading-tight text-[#3E5C46]">
-                {language === 'ar' ? t('brandName') : 'TakwinPro'}
+                {language === 'ar' ? t('brandName') : 'TadribPro'}
               </span>
               <span className="text-xs text-[#5C7449] block tracking-tight">
                 {language === 'ar' ? 'التكوين المتواصل' : 'Formation Continue'}
@@ -89,7 +89,7 @@ export default function LandingPage() {
               
               <div className="flex justify-between items-start z-10">
                 <span className="text-3xl font-black text-[#3E5C46]">01</span>
-                <span className="px-3 py-1 bg-[#CCD67F] text-[#3E5C46] text-xs font-bold rounded-full">TakwinPro</span>
+                <span className="px-3 py-1 bg-[#CCD67F] text-[#3E5C46] text-xs font-bold rounded-full">TadribPro</span>
               </div>
               
               <div className="z-10 my-6">
@@ -237,7 +237,7 @@ export default function LandingPage() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-[#CCD67F]" />
-                <span>contact@takwinpro.dz</span>
+                <span>contact@tadribpro.dz</span>
               </li>
             </ul>
           </div>
