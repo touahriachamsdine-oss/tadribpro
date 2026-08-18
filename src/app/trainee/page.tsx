@@ -23,7 +23,10 @@ import {
   HelpCircle,
   Star,
   Send,
-  MessageSquare
+  MessageSquare,
+  LayoutDashboard,
+  FileText,
+  ClipboardCheck
 } from 'lucide-react';
 
 export default function TraineePortalPage() {
@@ -37,6 +40,9 @@ export default function TraineePortalPage() {
   const [certificate, setCertificate] = useState<Certificate | null>(null);
   const certRequested = useRef(false);
   const [loading, setLoading] = useState(true);
+
+  // Portal Tab Navigation
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'course' | 'lessons' | 'exams' | 'certificate'>('dashboard');
 
   // LMS Interactive Modal States
   const [activeModule, setActiveModule] = useState<string | null>(null);
@@ -275,6 +281,15 @@ export default function TraineePortalPage() {
     setShowQuizError(false);
   };
 
+  const startModuleQuiz = (moduleTitle: string) => {
+    setActiveModule(moduleTitle);
+    setCurrentSlideIndex(4);
+    setQuizAnswers({});
+    setQuizSubmitted(false);
+    setQuizScore(0);
+    setShowQuizError(false);
+  };
+
   const selectQuizOption = (questionIndex: number, optionIndex: number) => {
     if (quizSubmitted) return;
     setQuizAnswers(prev => ({
@@ -429,12 +444,79 @@ export default function TraineePortalPage() {
 
         {/* Sidebar Menu Items */}
         <nav className="flex flex-row lg:flex-col lg:py-6 overflow-x-auto lg:overflow-x-visible w-full justify-around lg:justify-start lg:gap-2 flex-grow lg:flex-grow-0">
-          <button className="flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start text-white bg-[#5C7449]/30">
-            <div className={`hidden lg:block absolute top-0 bottom-0 w-1 bg-[#CCD67F] ${dir === 'rtl' ? 'right-0' : 'left-0'}`} />
+          <button 
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+              activeTab === 'dashboard' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
+            }`}
+          >
+            {activeTab === 'dashboard' && (
+              <div className={`hidden lg:block absolute top-0 bottom-0 w-1 bg-[#CCD67F] ${dir === 'rtl' ? 'right-0' : 'left-0'}`} />
+            )}
+            <LayoutDashboard className="w-5 h-5 text-[#CCD67F]" />
+            <span className="text-[10px] sm:text-xs lg:text-sm">
+              {language === 'ar' ? 'لوحة التحكم' : 'Tableau de bord'}
+            </span>
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('course')}
+            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+              activeTab === 'course' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
+            }`}
+          >
+            {activeTab === 'course' && (
+              <div className={`hidden lg:block absolute top-0 bottom-0 w-1 bg-[#CCD67F] ${dir === 'rtl' ? 'right-0' : 'left-0'}`} />
+            )}
             <BookOpen className="w-5 h-5 text-[#CCD67F]" />
             <span className="text-[10px] sm:text-xs lg:text-sm">{t('myActiveTrack')}</span>
           </button>
-          
+
+          <button 
+            onClick={() => setActiveTab('lessons')}
+            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+              activeTab === 'lessons' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
+            }`}
+          >
+            {activeTab === 'lessons' && (
+              <div className={`hidden lg:block absolute top-0 bottom-0 w-1 bg-[#CCD67F] ${dir === 'rtl' ? 'right-0' : 'left-0'}`} />
+            )}
+            <FileText className="w-5 h-5 text-[#CCD67F]" />
+            <span className="text-[10px] sm:text-xs lg:text-sm">
+              {language === 'ar' ? 'الدروس والملفات' : 'Documents PDF'}
+            </span>
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('exams')}
+            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+              activeTab === 'exams' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
+            }`}
+          >
+            {activeTab === 'exams' && (
+              <div className={`hidden lg:block absolute top-0 bottom-0 w-1 bg-[#CCD67F] ${dir === 'rtl' ? 'right-0' : 'left-0'}`} />
+            )}
+            <ClipboardCheck className="w-5 h-5 text-[#CCD67F]" />
+            <span className="text-[10px] sm:text-xs lg:text-sm">
+              {language === 'ar' ? 'الامتحانات' : 'Examens'}
+            </span>
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('certificate')}
+            className={`flex items-center gap-3 py-4 px-6 text-sm font-semibold transition-all relative w-full min-w-[90px] lg:min-w-0 justify-center lg:justify-start ${
+              activeTab === 'certificate' ? 'text-white bg-[#5C7449]/30' : 'text-[#F3E4C9]/85 hover:text-white hover:bg-[#5C7449]/15'
+            }`}
+          >
+            {activeTab === 'certificate' && (
+              <div className={`hidden lg:block absolute top-0 bottom-0 w-1 bg-[#CCD67F] ${dir === 'rtl' ? 'right-0' : 'left-0'}`} />
+            )}
+            <Award className="w-5 h-5 text-[#CCD67F]" />
+            <span className="text-[10px] sm:text-xs lg:text-sm">
+              {language === 'ar' ? 'الشهادة' : 'Attestation'}
+            </span>
+          </button>
+
           <button 
             onClick={() => {
               setIsDrawerOpen(true);
@@ -444,7 +526,7 @@ export default function TraineePortalPage() {
           >
             <HelpCircle className="w-5 h-5 text-[#CCD67F]/80" />
             <span className="text-[10px] sm:text-xs lg:text-sm">
-              {language === 'ar' ? 'الأسئلة والدعم' : 'FAQs & Support'}
+              {language === 'ar' ? 'الدعم والأسئلة' : 'Support & FAQ'}
             </span>
           </button>
         </nav>
@@ -494,6 +576,37 @@ export default function TraineePortalPage() {
           </div>
         </header>
 
+        {/* Mobile Tab Bar */}
+        <div className="lg:hidden flex overflow-x-auto gap-2 pb-4 mb-6 -mx-2 px-2">
+          {([
+            { id: 'dashboard', label: language === 'ar' ? 'الرئيسية' : 'Accueil', icon: LayoutDashboard },
+            { id: 'course', label: language === 'ar' ? 'التكوين' : 'Cours', icon: BookOpen },
+            { id: 'lessons', label: language === 'ar' ? 'الملفات' : 'Docs', icon: FileText },
+            { id: 'exams', label: language === 'ar' ? 'الامتحانات' : 'Examens', icon: ClipboardCheck },
+            { id: 'certificate', label: language === 'ar' ? 'الشهادة' : 'Attestation', icon: Award }
+          ] as { id: 'dashboard' | 'course' | 'lessons' | 'exams' | 'certificate'; label: string; icon: any }[]).map(item => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-[10px] font-black transition-colors ${
+                activeTab === item.id
+                  ? 'bg-[#3E5C46] text-[#F3E4C9]'
+                  : 'bg-[#F3E4C9] text-[#3E5C46] hover:bg-[#CCD67F]/40'
+              }`}
+            >
+              <item.icon className="w-3.5 h-3.5" />
+              <span>{item.label}</span>
+            </button>
+          ))}
+          <button
+            onClick={() => { setIsDrawerOpen(true); setDrawerTab('faq'); }}
+            className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-[10px] font-black bg-[#F3E4C9] text-[#3E5C46] hover:bg-[#CCD67F]/40 transition-colors"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>{language === 'ar' ? 'الدعم' : 'Aide'}</span>
+          </button>
+        </div>
+
         {/* Dynamic Trainee Account Selector removed — access is session-scoped to the logged-in trainee */}
         <div className="bg-[#F3E4C9] p-4 rounded-xl mb-8 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
@@ -513,6 +626,35 @@ export default function TraineePortalPage() {
         {!loading && currentTrainee && (
           <div className="animate-fadeIn">
             
+            {/* ===================== TAB: DASHBOARD ===================== */}
+            {activeTab === 'dashboard' && (
+              <>
+
+                {/* Completion CTA when trainee finished the course */}
+                {currentTrainee.status === 'completed' && (
+                  <div className="mb-8 p-5 rounded-2xl bg-[#CCD67F]/30 border border-[#3E5C46]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fadeIn">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-[#3E5C46] text-[#CCD67F] p-2.5 rounded-full">
+                        <Award className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-black text-[#3E5C46] block">
+                          {language === 'ar' ? 'تهانينا! لقد أتممت جميع مقاييس التكوين' : 'Félicitations ! Parcours terminé'}
+                        </span>
+                        <span className="text-[11px] text-[#5C7449] font-semibold block">
+                          {language === 'ar' ? 'شهادتك الرسمية جاهزة للطباعة.' : 'Votre attestation officielle est prête.'}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('certificate')}
+                      className="px-5 py-2 bg-[#3E5C46] text-white rounded-full text-xs font-black hover:bg-[#5C7449] transition-colors shrink-0"
+                    >
+                      {language === 'ar' ? 'عرض الشهادة' : 'Voir l\'attestation'}
+                    </button>
+                  </div>
+                )}
+
             {/* Trainee Welcome Card (Flat, no shadows) */}
             <div className="bg-[#3E5C46] text-[#F3E4C9] p-8 rounded-3xl mb-8 relative overflow-hidden">
               {/* Background abstract decoration shape */}
@@ -620,6 +762,13 @@ export default function TraineePortalPage() {
               </div>
 
             </div>
+
+            </> /* dashboard */
+            )}
+
+            {/* ===================== TAB: CERTIFICATE ===================== */}
+            {activeTab === 'certificate' && (
+              <>
 
             {/* DUAL-LANGUAGE PRINT-READY GRADUATION CERTIFICATE BLOCK */}
             {currentTrainee.status === 'completed' && (
@@ -859,14 +1008,43 @@ export default function TraineePortalPage() {
               </section>
             )}
 
-            {/* DUAL COLUMN RESPONSIVE WORKSPACE (Checklist on left, Leaderboard on right) */}
+            {/* Eligibility card shown in Certificate tab when course not yet completed */}
+            {currentTrainee.status !== 'completed' && (
+              <div className="p-10 sm:p-14 text-center bg-[#F3E4C9]/40 rounded-3xl border-2 border-dashed border-[#5C7449]/30 animate-fadeIn">
+                <div className="bg-[#3E5C46] text-[#CCD67F] p-4 rounded-full inline-flex mb-5">
+                  <Award className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-black text-[#3E5C46] mb-3">
+                  {language === 'ar' ? 'شهادتك لم تُصدر بعد' : 'Attestation non encore disponible'}
+                </h3>
+                <p className="text-sm text-[#5C7449] font-medium max-w-md mx-auto leading-relaxed mb-6">
+                  {language === 'ar'
+                    ? `تظهر الشهادة الرسمية هنا بمجرد إتمام جميع مقاييس مسار "${currentTrainee.trackTitleAr}" والنجاح في امتحاناتها (التقدم 100%). تقدمك الحالي: ${currentTrainee.progress}%`
+                    : `L'attestation officielle apparaîtra ici une fois que vous aurez validé tous les modules du parcours "${currentTrainee.trackTitleFr}" (progression 100%). Progression actuelle : ${currentTrainee.progress}%`}
+                </p>
+                <div className="progress-bar-container max-w-xs mx-auto">
+                  <div className="progress-bar-fill" style={{ width: `${currentTrainee.progress}%` }}></div>
+                </div>
+                <button
+                  onClick={() => setActiveTab('course')}
+                  className="mt-6 px-6 py-2.5 rounded-full text-xs font-black bg-[#3E5C46] text-white hover:bg-[#5C7449] transition-colors"
+                >
+                  {language === 'ar' ? 'متابعة الدراسة' : 'Continuer la formation'}
+                </button>
+              </div>
+            )}
+
+              </>
+            ) /* certificate */}
+
+            {/* DUAL COLUMN RESPONSIVE WORKSPACE (sections filtered per active tab) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               
               {/* 2/3 COLUMN: MAIN CONTENT (Messages, Lessons, Checklist) */}
               <div className="lg:col-span-2 flex flex-col gap-8">
                 
-                {/* COMPANY ANNOUNCEMENTS / MESSAGES */}
-                {companyMessages.length > 0 && (
+                {/* COMPANY ANNOUNCEMENTS / MESSAGES (Dashboard tab) */}
+                {activeTab === 'dashboard' && companyMessages.length > 0 && (
                   <section className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#5C7449]/10 shadow-sm animate-fadeIn">
                     <div className="flex items-center gap-2 border-b border-[#F3E4C9] pb-3 mb-6">
                       <MessageSquare className="w-5 h-5 text-[#3E5C46]" />
@@ -888,8 +1066,8 @@ export default function TraineePortalPage() {
                   </section>
                 )}
 
-                {/* TARGETED LESSONS / PDF MATERIALS */}
-                {lessons.length > 0 && (
+                {/* TARGETED LESSONS / PDF MATERIALS (Lessons tab) */}
+                {activeTab === 'lessons' && lessons.length > 0 && (
                   <section className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#5C7449]/10 shadow-sm animate-fadeIn">
                     <div className="flex items-center gap-2 border-b border-[#F3E4C9] pb-3 mb-6">
                       <BookOpen className="w-5 h-5 text-[#3E5C46]" />
@@ -930,6 +1108,7 @@ export default function TraineePortalPage() {
                     </div>
                   </section>
                 )}
+                {activeTab === 'course' && (
                 <section className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#5C7449]/10">
                   <div className="flex items-center gap-2 border-b border-[#F3E4C9] pb-3 mb-6">
                     <Layers className="w-5 h-5 text-[#3E5C46]" />
@@ -1005,10 +1184,13 @@ export default function TraineePortalPage() {
                     })}
                   </div>
                 </section>
+                )}
               </div>
 
-              {/* 1/3 COLUMN: LEADERBOARD & HELPDESK QUICK-CARD */}
+              {/* 1/3 COLUMN: LEADERBOARD & HELPDESK QUICK-CARD (Dashboard tab) */}
               <div className="flex flex-col gap-6 lg:col-span-1">
+                {activeTab === 'dashboard' && (
+                <>
                 
                 {/* MOTIVATIONAL INTERACTIVE LEADERBOARD CARD */}
                 <section className="bg-white p-6 rounded-3xl border-2 border-[#5C7449]/10">
@@ -1093,9 +1275,113 @@ export default function TraineePortalPage() {
                   </button>
                 </section>
 
+                </>
+                )}
+
               </div>
 
             </div>
+
+            {/* ===================== TAB: LESSONS (empty state) ===================== */}
+            {activeTab === 'lessons' && lessons.length === 0 && (
+              <section className="bg-white p-10 sm:p-14 rounded-3xl border-2 border-[#5C7449]/10 text-center animate-fadeIn">
+                <div className="bg-[#CCD67F]/30 text-[#3E5C46] p-4 rounded-full inline-flex mb-5">
+                  <FileText className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-black text-[#3E5C46] mb-2">
+                  {language === 'ar' ? 'لا توجد ملفات مرفوعة بعد' : 'Aucun document disponible'}
+                </h3>
+                <p className="text-sm text-[#5C7449] font-medium max-w-md mx-auto leading-relaxed">
+                  {language === 'ar'
+                    ? 'لم يقم مسؤولو مؤسستك برفع ملفات أو دروس لمقياسك بعد. تابع التكوين أو تواصل مع إدارتك عبر تذكرة الدعم.'
+                    : 'Votre établissement n’a pas encore partagé de documents pour votre module. Continuez votre formation ou contactez votre administration via un ticket.'}
+                </p>
+              </section>
+            )}
+
+            {/* ===================== TAB: EXAMS ===================== */}
+            {activeTab === 'exams' && (
+              <div className="flex flex-col gap-6 animate-fadeIn">
+                <section className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-[#5C7449]/10">
+                  <div className="flex items-center gap-2 border-b border-[#F3E4C9] pb-3 mb-6">
+                    <ClipboardCheck className="w-5 h-5 text-[#3E5C46]" />
+                    <h3 className="text-xl font-bold text-[#3E5C46]">
+                      {language === 'ar' ? 'امتحانات المقاييس' : 'Examens des modules'}
+                    </h3>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    {getTrackModules().length === 0 ? (
+                      <p className="text-sm text-[#5C7449] font-bold text-center py-6">
+                        {language === 'ar' ? 'لا توجد مقاييس مسجلة لمسارك الحالي.' : 'Aucun module enregistré pour votre parcours.'}
+                      </p>
+                    ) : (
+                      getTrackModules().map((moduleTitle, index) => {
+                        const isCompleted = currentTrainee.completedModules.includes(moduleTitle);
+                        return (
+                          <div 
+                            key={index} 
+                            className={`p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 ${
+                              isCompleted 
+                                ? 'bg-[#CCD67F]/25 border-l-4 sm:border-l-0 sm:border-r-4 border-[#CCD67F]' 
+                                : 'bg-[#F3E4C9]/40 border-l-4 sm:border-l-0 sm:border-r-4 border-[#5C7449]/20'
+                            }`}
+                          >
+                            <div className="flex items-start gap-4">
+                              <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                                isCompleted ? 'bg-[#CCD67F] text-[#3E5C46]' : 'bg-[#5C7449]/20 text-[#3E5C46]'
+                              }`}>
+                                {index + 1}
+                              </span>
+                              <div>
+                                <h4 className="text-base font-bold text-[#3E5C46] leading-tight">
+                                  {moduleTitle}
+                                </h4>
+                                <span className={`text-[10px] font-semibold block mt-1 ${
+                                  isCompleted ? 'text-[#3E5C46]' : 'text-[#5C7449]'
+                                }`}>
+                                  {isCompleted
+                                    ? (language === 'ar' ? '✓ نجحت في امتحان هذا المقياس' : '✓ Examen validé')
+                                    : (language === 'ar' ? 'لم يتم اجتياز الامتحان بعد • يشترط 4/4' : 'Examen non passé • Score requis 4/4')}
+                                </span>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => startModuleQuiz(moduleTitle)}
+                              className={`px-5 py-2 rounded-full text-xs font-black transition-colors flex items-center gap-1.5 self-end sm:self-auto ${
+                                isCompleted 
+                                  ? 'bg-[#3E5C46] text-white hover:bg-[#5C7449]' 
+                                  : 'bg-[#CCD67F] text-[#3E5C46] hover:bg-[#3E5C46] hover:text-white'
+                              }`}
+                            >
+                              <ClipboardCheck className="w-3.5 h-3.5" />
+                              <span>
+                                {isCompleted
+                                  ? (language === 'ar' ? 'إعادة الامتحان' : 'Repasser')
+                                  : (language === 'ar' ? 'دخول الامتحان' : 'Passer l\'examen')}
+                              </span>
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </section>
+
+                <div className="bg-[#3E5C46] text-[#F3E4C9] p-6 rounded-3xl">
+                  <h4 className="text-sm font-black text-white mb-2 flex items-center gap-2">
+                    <Award className="w-4 h-4 text-[#CCD67F]" />
+                    {language === 'ar' ? 'قواعد النجاح في الامتحانات' : 'Règles de validation'}
+                  </h4>
+                  <p className="text-xs text-[#F3E4C9]/85 leading-relaxed">
+                    {language === 'ar'
+                      ? 'لكل مقياس اختبار من 4 أسئلة اختيار متعدد. يشترط تحقيق العلامة الكاملة (4/4) لتسجيل المقياس كمكتمل، ويمكنك إعادة المحاولة دون حدود. عند إتمام جميع المقاييس تصبح شهادتك الرسمية جاهزة للطباعة.'
+                      : 'Chaque module comporte un quiz de 4 questions à choix multiples. Un score parfait de 4/4 est requis pour valider le module. Les tentatives sont illimitées. Une fois tous les modules validés, votre attestation officielle sera prête.'}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* FLOATING ACTION SUPPORT BUTTON */}
             <button
