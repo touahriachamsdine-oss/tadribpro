@@ -32,6 +32,9 @@ yarn-error.log*
 .env*.local
 *.docx
 
+# local accounts/passwords list
+ACCOUNTS.txt
+
 # vercel
 .vercel
 

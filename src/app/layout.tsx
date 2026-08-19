@@ -8,12 +8,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'منصة التكوين المتواصل | TadribPro',
+  title: 'منصة التكوين المتواصل | TakwinPro',
   description: 'المنصة الوطنية للتكوين المتواصل للموظفين والتربصات - الجزائر',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
-    title: 'TadribPro',
+    title: 'TakwinPro',
     statusBarStyle: 'black-translucent',
   },
   icons: {

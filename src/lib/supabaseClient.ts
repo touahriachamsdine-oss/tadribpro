@@ -11,6 +11,6 @@ export const supabase = isLiveSupabase
 
 if (!isLiveSupabase) {
   console.warn(
-    'TadribPro Warning: Supabase environment variables are missing. Running in robust offline mockup mode.'
+    'TakwinPro Warning: Supabase environment variables are missing. Running in robust offline mockup mode.'
   );
 }

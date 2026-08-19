@@ -146,7 +146,7 @@ export default function CertificateVerificationPage() {
                 منصة التكوين المتواصل
               </span>
               <span className="text-[10px] sm:text-xs text-[#5C7449] font-semibold block uppercase tracking-wider mt-0.5 font-mono">
-                TadribPro Portal
+                TakwinPro Portal
               </span>
             </div>
           </Link>
@@ -507,7 +507,7 @@ export default function CertificateVerificationPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-medium">
           <div>
             <span>منصة التكوين المتواصل | </span>
-            <span className="font-bold text-[#CCD67F] font-mono">TadribPro Algeria</span>
+            <span className="font-bold text-[#CCD67F] font-mono">TakwinPro Algeria</span>
           </div>
           <div className="text-[10px] opacity-75">
             {language === 'ar' ? '© 2026 وزارة الوظيفة العمومية والإصلاح الإداري. كل الحقوق محفوظة.' : '© 2026 Ministère de la Fonction Publique. Tous droits réservés.'}

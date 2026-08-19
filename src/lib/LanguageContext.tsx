@@ -18,7 +18,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   // Load language preference from localStorage if available
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('tadrib_lang') as Language;
+    const savedLanguage = localStorage.getItem('takwin_lang') as Language;
     if (savedLanguage === 'ar' || savedLanguage === 'fr') {
       setLanguageState(savedLanguage);
     }
@@ -29,7 +29,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const direction = language === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.dir = direction;
     document.documentElement.lang = language;
-    localStorage.setItem('tadrib_lang', language);
+    localStorage.setItem('takwin_lang', language);
   }, [language]);
 
   const toggleLanguage = () => {

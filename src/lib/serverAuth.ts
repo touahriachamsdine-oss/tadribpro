@@ -1,7 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
-export const SESSION_COOKIE = 'tadrib_session';
+export const SESSION_COOKIE = 'takwin_session';
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 export type Role = 'super-admin' | 'company' | 'trainee';

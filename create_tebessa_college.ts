@@ -46,26 +46,26 @@ async function run() {
 
   // Emails mapping for the trainees
   const traineeMapping = [
-    { trackId: 'track-3', nameAr: 'تست مصرف', email: 'tebessa-admin@tadribpro.dz' },
-    { trackId: 'track-6', nameAr: 'تست مساعد مصرف', email: 'tebessa-admin-assistant@tadribpro.dz' },
-    { trackId: 'track-2', nameAr: 'تست ملحق الإدارة', email: 'tebessa-attache@tadribpro.dz' },
-    { trackId: 'track-4', nameAr: 'تست محاسب إداري رئيسي', email: 'tebessa-comptable-principal@tadribpro.dz' },
-    { trackId: 'track-11', nameAr: 'تست محاسب إداري', email: 'tebessa-comptable@tadribpro.dz' },
-    { trackId: 'track-12', nameAr: 'تست مساعد مهندس مستوى أول في الإحصاء', email: 'tebessa-stat-assistant@tadribpro.dz' },
-    { trackId: 'track-13', nameAr: 'تست مساعد مهندس مستوى أول في الإعلام الآلي', email: 'tebessa-info-assistant@tadribpro.dz' },
-    { trackId: 'track-14', nameAr: 'تست تقني سامي في الإحصاء', email: 'tebessa-stat-tech@tadribpro.dz' },
-    { trackId: 'track-5', nameAr: 'تست تقني سامي في الإعلام الآلي', email: 'tebessa-info-tech@tadribpro.dz' },
-    { trackId: 'track-15', nameAr: 'تست كاتب مديرية رئيسي', email: 'tebessa-sec-ville-principal@tadribpro.dz' },
-    { trackId: 'track-16', nameAr: 'تست كاتب مديرية', email: 'tebessa-sec-ville@tadribpro.dz' },
-    { trackId: 'track-1', nameAr: 'تست عون إدارة', email: 'tebessa-agent-admin@tadribpro.dz' },
-    { trackId: 'track-17', nameAr: 'تست ملحق إدارة (تربص)', email: 'tebessa-stage-attache@tadribpro.dz' },
-    { trackId: 'track-18', nameAr: 'تست عون مكتب (تربص)', email: 'tebessa-stage-bureau@tadribpro.dz' },
-    { trackId: 'track-19', nameAr: 'تست عون إدارة رئيسي (تربص)', email: 'tebessa-stage-agent-principal@tadribpro.dz' },
-    { trackId: 'track-20', nameAr: 'تست عون إدارة (تربص)', email: 'tebessa-stage-agent@tadribpro.dz' },
-    { trackId: 'track-7', nameAr: 'تست مصرف البحث مستوى 1', email: 'tebessa-recherche-admin@tadribpro.dz' },
-    { trackId: 'track-21', nameAr: 'تست مساعد رئيسي لتسيير البحث', email: 'tebessa-recherche-assistant-principal@tadribpro.dz' },
-    { trackId: 'track-8', nameAr: 'تست مساعد تسيير البحث', email: 'tebessa-recherche-assistant@tadribpro.dz' },
-    { trackId: 'track-22', nameAr: 'تست مساعد تسيير البحث (تربص)', email: 'tebessa-stage-recherche-assistant@tadribpro.dz' }
+    { trackId: 'track-3', nameAr: 'تست مصرف', email: 'tebessa-admin@takwinpro.dz' },
+    { trackId: 'track-6', nameAr: 'تست مساعد مصرف', email: 'tebessa-admin-assistant@takwinpro.dz' },
+    { trackId: 'track-2', nameAr: 'تست ملحق الإدارة', email: 'tebessa-attache@takwinpro.dz' },
+    { trackId: 'track-4', nameAr: 'تست محاسب إداري رئيسي', email: 'tebessa-comptable-principal@takwinpro.dz' },
+    { trackId: 'track-11', nameAr: 'تست محاسب إداري', email: 'tebessa-comptable@takwinpro.dz' },
+    { trackId: 'track-12', nameAr: 'تست مساعد مهندس مستوى أول في الإحصاء', email: 'tebessa-stat-assistant@takwinpro.dz' },
+    { trackId: 'track-13', nameAr: 'تست مساعد مهندس مستوى أول في الإعلام الآلي', email: 'tebessa-info-assistant@takwinpro.dz' },
+    { trackId: 'track-14', nameAr: 'تست تقني سامي في الإحصاء', email: 'tebessa-stat-tech@takwinpro.dz' },
+    { trackId: 'track-5', nameAr: 'تست تقني سامي في الإعلام الآلي', email: 'tebessa-info-tech@takwinpro.dz' },
+    { trackId: 'track-15', nameAr: 'تست كاتب مديرية رئيسي', email: 'tebessa-sec-ville-principal@takwinpro.dz' },
+    { trackId: 'track-16', nameAr: 'تست كاتب مديرية', email: 'tebessa-sec-ville@takwinpro.dz' },
+    { trackId: 'track-1', nameAr: 'تست عون إدارة', email: 'tebessa-agent-admin@takwinpro.dz' },
+    { trackId: 'track-17', nameAr: 'تست ملحق إدارة (تربص)', email: 'tebessa-stage-attache@takwinpro.dz' },
+    { trackId: 'track-18', nameAr: 'تست عون مكتب (تربص)', email: 'tebessa-stage-bureau@takwinpro.dz' },
+    { trackId: 'track-19', nameAr: 'تست عون إدارة رئيسي (تربص)', email: 'tebessa-stage-agent-principal@takwinpro.dz' },
+    { trackId: 'track-20', nameAr: 'تست عون إدارة (تربص)', email: 'tebessa-stage-agent@takwinpro.dz' },
+    { trackId: 'track-7', nameAr: 'تست مصرف البحث مستوى 1', email: 'tebessa-recherche-admin@takwinpro.dz' },
+    { trackId: 'track-21', nameAr: 'تست مساعد رئيسي لتسيير البحث', email: 'tebessa-recherche-assistant-principal@takwinpro.dz' },
+    { trackId: 'track-8', nameAr: 'تست مساعد تسيير البحث', email: 'tebessa-recherche-assistant@takwinpro.dz' },
+    { trackId: 'track-22', nameAr: 'تست مساعد تسيير البحث (تربص)', email: 'tebessa-stage-recherche-assistant@takwinpro.dz' }
   ];
 
   // 4. Clean up existing company with ID 'comp-tebessa' to ensure a clean start
@@ -74,7 +74,7 @@ async function run() {
 
   // 5. Insert Tebessa College company
   const companyName = 'جامعة العربي التبسي - تبسة (Tebessa College)';
-  const companyEmail = 'tebessa@tadribpro.dz';
+  const companyEmail = 'tebessa@takwinpro.dz';
   const companySector = 'التعليم العالي / Recherche';
   
   console.log('Inserting company row...');

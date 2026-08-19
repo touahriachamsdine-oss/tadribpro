@@ -4,7 +4,7 @@ export const translations = {
   ar: {
     brandName: 'التكوين المتواصل',
     subBrandName: 'منصة التكوين المهني للمؤسسات',
-    frenchBrandName: 'TadribPro',
+    frenchBrandName: 'TakwinPro',
     langName: 'Français',
     langCode: 'fr',
     dir: 'rtl',
@@ -41,7 +41,7 @@ export const translations = {
     feature3Desc: 'الحصول على شهادات معترف بها عند اجتياز الامتحانات والتربصات المبرمجة بنجاح.',
     footerContact: 'اتصل بنا',
     footerAddress: 'الجزائر العاصمة، جمهورية الجزائر الديمقراطية الشعبية',
-    footerCopyright: '© 2026 منصة التكوين المتواصل (TadribPro). كل الحقوق محفوظة للوظيفة العمومية.',
+    footerCopyright: '© 2026 منصة التكوين المتواصل (TakwinPro). كل الحقوق محفوظة للوظيفة العمومية.',
 
     // Auth Screen
     authSlogan: 'التحول الرقمي لتطوير الموارد البشرية العمومية',
@@ -105,7 +105,7 @@ export const translations = {
     statusInProgress: 'قيد التكوين'
   },
   fr: {
-    brandName: 'TadribPro',
+    brandName: 'TakwinPro',
     subBrandName: 'Plateforme B2B de Formation Continue',
     frenchBrandName: 'التكوين المتواصل',
     langName: 'العربية',
@@ -144,7 +144,7 @@ export const translations = {
     feature3Desc: 'Obtention d’attestations et certifications reconnues après validation des examens et des modules officiels.',
     footerContact: 'Contactez-nous',
     footerAddress: 'Alger, République Algérienne Démocratique et Populaire',
-    footerCopyright: '© 2026 Plateforme TadribPro (Formation Continue). Tous droits réservés.',
+    footerCopyright: '© 2026 Plateforme TakwinPro (Formation Continue). Tous droits réservés.',
 
     // Auth Screen
     authSlogan: 'La transformation digitale au service du développement des ressources humaines publiques',

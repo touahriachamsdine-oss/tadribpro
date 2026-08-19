@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'تادريب برو | منصة التكوين المتواصل',
-    short_name: 'TadribPro',
+    name: 'تكوين برو | منصة التكوين المتواصل',
+    short_name: 'TakwinPro',
     description: 'المنصة الوطنية للتكوين المتواصل للموظفين والتربصات - الجزائر',
     start_url: '/',
     display: 'standalone',

@@ -322,7 +322,7 @@ export default function CompanyAdminPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `TadribPro_Trainees_${companyId}_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `TakwinPro_Trainees_${companyId}_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

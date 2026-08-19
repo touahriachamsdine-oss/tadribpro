@@ -139,7 +139,7 @@ function AuthPageContent() {
           </Link>
           <div>
             <span className="font-extrabold text-2xl text-[#3E5C46] block">
-              {language === 'ar' ? t('brandName') : 'TadribPro'}
+              {language === 'ar' ? t('brandName') : 'TakwinPro'}
             </span>
             <span className="text-xs text-[#5C7449] font-semibold block">
               {language === 'ar' ? 'التكوين المتواصل' : 'Formation Continue'}

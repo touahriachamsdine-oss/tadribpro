@@ -10,7 +10,7 @@ const dbUrlMatch = envContent.match(/^DATABASE_URL=(.+)$/m);
 if (!dbUrlMatch) throw new Error('DATABASE_URL not found in .env');
 const sql = neon(dbUrlMatch[1].trim());
 
-const ADMIN_EMAIL = (envContent.match(/^ADMIN_EMAIL=(.+)$/m) || [null, 'admin@tadribpro.dz'])[1].trim();
+const ADMIN_EMAIL = (envContent.match(/^ADMIN_EMAIL=(.+)$/m) || [null, 'admin@takwinpro.dz'])[1].trim();
 const ADMIN_PASSWORD = (envContent.match(/^ADMIN_PASSWORD=(.+)$/m) || [null, 'admin123'])[1].trim();
 const DEFAULT_PASSWORD = 'tadrib123';
 
@@ -23,7 +23,7 @@ function hashPassword(password) {
 
 // ---- Migration ----------------------------------------------------------------
 async function run() {
-  console.log('=== TadribPro migration ===');
+  console.log('=== TakwinPro migration ===');
 
   // 1. Ensure core auth tables exist
   await sql`
