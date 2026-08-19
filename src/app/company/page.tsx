@@ -2218,7 +2218,7 @@ export default function CompanyAdminPage() {
                     type="text"
                     value={newMessageTitle}
                     onChange={(e) => setNewMessageTitle(e.target.value)}
-                    placeholder={language === 'ar' ? 'مثال: تحديث حول مواعيد التدريب' : 'Ex: Mise à jour des horaires'}
+                    placeholder={language === 'ar' ? 'مثال: تحديث حول مواعيد التكوين' : 'Ex: Mise à jour des horaires'}
                     className="underline-input"
                     required
                   />

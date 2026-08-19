@@ -548,7 +548,7 @@ const handleDeleteGlobalLesson = async (lessonId: string, title: string) => {
               {activeMenu === 'dashboard'
                 ? (language === 'ar' ? 'إحصائيات فورية وتوزع الموظفين والهيئات المنخرطة في برامج الترقية الوطنية.' : 'Statistiques en temps réel et répartition des agents et établissements publics.')
                 : language === 'ar' 
-                  ? 'مراقبة المؤسسات العمومية، إدارة عقود التدريب المهني، والتحقق من التراخيص الرسمية.' 
+                  ? 'مراقبة المؤسسات العمومية، إدارة عقود التكوين المهني، والتحقق من التراخيص الرسمية.' 
                   : 'Supervision des établissements, gestion des contrats de formation professionnelle et habilitations.'}
             </p>
           </div>
@@ -1061,7 +1061,7 @@ const handleDeleteGlobalLesson = async (lessonId: string, title: string) => {
                 {language === 'ar' ? 'إنشاء رتبة/مسار عام' : 'Créer Grade Global'}
               </h3>
               <p className="text-xs text-[#5C7449] mb-6 leading-normal">
-                {language === 'ar' ? 'قم بإضافة مسار تدريبي جديد ليصبح متاحاً لجميع المشرفين بالمؤسسات لتعيين موظفيهم عليه.' : 'Créez un nouveau parcours partagé pour toutes les entreprises.'}
+                {language === 'ar' ? 'قم بإضافة مسار تكويني جديد ليصبح متاحاً لجميع المشرفين بالمؤسسات لتعيين موظفيهم عليه.' : 'Créez un nouveau parcours partagé pour toutes les entreprises.'}
               </p>
 
               {success && activeMenu === 'tracks' && (
