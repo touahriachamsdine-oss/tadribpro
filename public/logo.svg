@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <rect width="120" height="120" fill="#fbf8f3"/>
+  <text x="60" y="78" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="72" fill="#3E5C46" letter-spacing="-6">TP</text>
+  <line x1="38" y1="88" x2="82" y2="88" stroke="#CCD67F" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="60" cy="102" r="3" fill="#5C7449"/>
+</svg>

@@ -13,9 +13,7 @@ export default function LandingPage() {
       <header className="border-b border-[#F3E4C9] bg-[#fbf8f3] z-10 sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="bg-[#3E5C46] text-[#F3E4C9] p-2 rounded-full">
-              <Landmark className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
+            <img src="/logo.svg" alt="TakwinPro" className="w-8 h-8 sm:w-9 sm:h-9 rounded-full shadow-md bg-[#fbf8f3]" />
             <div>
               <span className="font-bold text-lg sm:text-xl block leading-tight text-[#3E5C46]">
                 {language === 'ar' ? t('brandName') : 'TakwinPro'}
@@ -82,8 +80,10 @@ export default function LandingPage() {
           </div>
 
           {/* Hero Abstract Graphic */}
-          <div className="lg:col-span-5 flex justify-center items-center">
-            <div className="w-full max-w-md aspect-square bg-[#F3E4C9] p-5 sm:p-8 flex flex-col justify-between relative overflow-hidden rounded-3xl border-2 border-[#5C7449]">
+          <div className="lg:col-span-5 flex justify-center items-center relative">
+            {/* Cool floating logo */}
+            <img src="/logo.svg" alt="TP" className="absolute -top-8 -right-8 w-48 h-48 sm:w-72 sm:h-72 opacity-20 rotate-[12deg] pointer-events-none select-none z-0" />
+            <div className="w-full max-w-md aspect-square bg-[#F3E4C9] p-5 sm:p-8 flex flex-col justify-between relative overflow-hidden rounded-3xl border-2 border-[#5C7449] z-10">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#CCD67F]/30 rounded-bl-full pointer-events-none"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#5C7449]/20 rounded-tr-full pointer-events-none"></div>
               
