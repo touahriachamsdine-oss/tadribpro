@@ -134,19 +134,32 @@ export default function TraineePortalPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      const demoMode = new URLSearchParams(window.location.search).get('demo') === '1';
       const session = await getSession();
-      if (!session || session.role !== 'trainee') {
+      if (!demoMode && (!session || session.role !== 'trainee')) {
         router.replace('/auth');
         return;
       }
       try {
-        const me = await db.getTraineeByEmail(session.email);
-        if (!me) {
-          router.replace('/auth');
-          return;
+        let me: Trainee | null = null;
+        let roster: Trainee[] = [];
+        if (demoMode) {
+          // Demo mode: pick the first trainee as the demo view
+          roster = await db.getTrainees();
+          if (cancelled) return;
+          if (roster.length === 0) {
+            router.replace('/auth');
+            return;
+          }
+          me = roster[0];
+        } else {
+          me = await db.getTraineeByEmail(session!.email);
+          if (!me) {
+            router.replace('/auth');
+            return;
+          }
+          roster = await db.getTrainees(session!.company_id || undefined);
         }
-        if (cancelled) return;
-        const roster = await db.getTrainees(session.company_id || undefined);
         if (cancelled) return;
         setTrainees(roster);
         setCurrentTrainee(me);

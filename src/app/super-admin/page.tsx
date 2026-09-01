@@ -109,8 +109,9 @@ export default function SuperAdminPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      const demoMode = new URLSearchParams(window.location.search).get('demo') === '1';
       const session = await getSession();
-      if (!session || session.role !== 'super-admin') {
+      if (!demoMode && (!session || session.role !== 'super-admin')) {
         router.replace('/auth');
         return;
       }

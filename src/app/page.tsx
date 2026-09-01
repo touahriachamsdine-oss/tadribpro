@@ -190,13 +190,13 @@ export default function LandingPage() {
         <Link href="/auth" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#5C7449] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-semibold">
           Sign In / Register
         </Link>
-        <Link href="/super-admin" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#5C7449] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-semibold">
+        <Link href="/super-admin?demo=1" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#5C7449] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-semibold">
           Super Admin Panel
         </Link>
-        <Link href="/company" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#5C7449] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-semibold">
+        <Link href="/company?demo=1" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#5C7449] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-semibold">
           Company Panel
         </Link>
-        <Link href="/trainee" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#5C7449] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-semibold">
+        <Link href="/trainee?demo=1" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#5C7449] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-semibold">
           Trainee View
         </Link>
         <Link href="/verify" className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-1 bg-[#CCD67F] text-[#3E5C46] rounded hover:bg-[#fbf8f3] hover:text-[#3E5C46] transition-colors font-bold">

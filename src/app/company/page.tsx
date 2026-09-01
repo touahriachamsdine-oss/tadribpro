@@ -185,18 +185,32 @@ export default function CompanyAdminPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      const searchParams = new URLSearchParams(window.location.search);
+      const demoMode = searchParams.get('demo') === '1';
       const session = await getSession();
-      if (!session || (session.role !== 'company' && session.role !== 'super-admin')) {
+      if (!demoMode && (!session || (session.role !== 'company' && session.role !== 'super-admin'))) {
         router.replace('/auth');
         return;
       }
-      setIsSuperAdmin(session.role === 'super-admin');
+      setIsSuperAdmin(!demoMode && session?.role === 'super-admin');
 
-      const searchParams = new URLSearchParams(window.location.search);
-      const queryCompanyId = searchParams.get('companyId');
+      const queryCompanyId = demoMode ? searchParams.get('companyId') : searchParams.get('companyId');
 
-      let activeCompanyId = session.company_id || '';
-      if (session.role === 'super-admin') {
+      let activeCompanyId = session?.company_id || '';
+      if (demoMode) {
+        // Demo mode: use ?companyId= or fall back to the first company
+        if (queryCompanyId) {
+          activeCompanyId = queryCompanyId;
+        } else {
+          const companies = await db.getCompanies();
+          if (cancelled) return;
+          if (companies.length === 0) {
+            router.replace('/auth');
+            return;
+          }
+          activeCompanyId = companies[0].id;
+        }
+      } else if (session?.role === 'super-admin') {
         // Super admins may inspect a company's space via ?companyId=...
         if (!queryCompanyId) {
           router.replace('/super-admin');
